@@ -23,7 +23,7 @@ function Projects() {
   };
 
   const listClasses = hasCarousel
-    ? 'flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
+    ? 'flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 items-stretch [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'
     : 'grid gap-6 sm:grid-cols-2 xl:grid-cols-3';
 
   return (

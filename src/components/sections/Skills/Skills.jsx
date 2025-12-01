@@ -1,12 +1,15 @@
-import React from 'react';
-import { useInView } from 'react-intersection-observer';
+import React, { useState, useRef, useEffect } from 'react'; // 1. Tambah useState & useRef
+import { useInView } from 'react-intersection-observer'; // ✅ Pakai kurung kurawal
 import { SKILLS_DATA } from '../../../data/skills';
 import { SiReact, SiLaravel, SiFigma } from 'react-icons/si';
 import { TbBrandTailwind } from 'react-icons/tb';
-import { FaGithub, FaLinkedin, FaInstagram, FaSpotify } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaInstagram, FaSpotify, FaPlay, FaPause} from 'react-icons/fa';
 import { MdLocationOn, MdSchedule } from 'react-icons/md';
 import profilePhoto from '../../../assets/pp.webp';
+import facePhoto from '../../../assets/fp.webp';
 import projectPreview from '../../../assets/projects/4.webp';
+import realityClub from '../../../assets/reality-club.webp'
+import songFile from '../../../assets/audio/reality-club.mp3';
 
 const cardBase =
   'relative flex h-full flex-col gap-4 rounded-[28px] border border-white/10 bg-[var(--color-card-bg)]/90 p-6 shadow-[0_18px_40px_rgba(0,0,0,0.4)] transition-all duration-300 hover:-translate-y-1 hover:border-[var(--color-primary)]';
@@ -21,15 +24,91 @@ const socialLinks = [
   { label: 'Instagram', href: 'https://www.instagram.com/hafizh_tr', icon: <FaInstagram /> }
 ];
 
+const SONG_CONFIG = {
+  start: 52,      // Detik ke-65 (1:05)
+  duration: 10,   // Main selama 10 detik
+  volume: 0.5     // Volume 50%
+};
+
 function Skills() {
   const { ref, inView } = useInView({
     triggerOnce: true,
     threshold: 0.1
   });
 
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const audioRef = useRef(null);
+  const rafRef = useRef(null);
+  const timeoutRef = useRef(null);
+
+  const handlePlaySnippet = () => {
+    const audio = audioRef.current;
+    
+    if (isPlaying) {
+      pauseAudio();
+    } else {
+      playAudio();
+    }
+  };
+
+  const playAudio = () => {
+    const audio = audioRef.current;
+    
+    // Set posisi awal
+    audio.currentTime = SONG_CONFIG.start;
+    audio.volume = SONG_CONFIG.volume;
+    audio.play();
+    setIsPlaying(true);
+
+    // Mulai animasi progress bar
+    rafRef.current = requestAnimationFrame(updateProgress);
+  };
+
+  const pauseAudio = () => {
+    const audio = audioRef.current;
+    audio.pause();
+    setIsPlaying(false);
+    
+    // Stop animasi
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+    }
+    
+    // Reset progress ke 0 (opsional, biar rapi)
+    setProgress(0);
+  };
+
+  const updateProgress = () => {
+    const audio = audioRef.current;
+    
+    // Hitung berapa detik yang sudah berjalan sejak start point
+    const currentPlayTime = audio.currentTime - SONG_CONFIG.start;
+    
+    // Hitung persentase (0 sampai 100)
+    const progressPercent = (currentPlayTime / SONG_CONFIG.duration) * 100;
+
+    if (progressPercent >= 100) {
+      // Kalau sudah 100% atau lebih, stop.
+      pauseAudio();
+    } else {
+      // Update state progress
+      setProgress(progressPercent);
+      // Lanjut ke frame berikutnya
+      rafRef.current = requestAnimationFrame(updateProgress);
+    }
+  };
+
+  // Cleanup: Stop lagu kalau user pindah halaman/component di-unmount
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, []);
+
   const handleCopyEmail = () => {
     if (navigator?.clipboard) {
-      navigator.clipboard.writeText('youremail@example.com');
+      navigator.clipboard.writeText('taufiqu.dev@gmail.com');
     }
   };
 
@@ -44,13 +123,13 @@ function Skills() {
       }}
       ref={ref}
     >
-      <h2 className="section-title">Skills & snapshot</h2>
+      <h2 className="section-title">My Dev Space</h2>
 
       <div className="mx-auto grid w-full max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-12">
         {/* Intro */}
         <div className={`${cardBase} justify-between sm:col-span-2 lg:col-span-7`}>
           <div className="flex flex-col gap-4">
-            <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--muted-color)' }}>
+            <p className="text-xl uppercase tracking-[0.2em]" style={{ color: 'var(--muted-color)' }}>
               Hi, I&apos;m
             </p>
             <h3 className="font-['Oswald',sans-serif] text-3xl sm:text-4xl">
@@ -78,11 +157,11 @@ function Skills() {
 
         <div className={`${cardBase} overflow-hidden p-0 sm:col-span-1 lg:col-span-3`}>
           <img
-            src={profilePhoto}
+            src={facePhoto}
             alt="Portrait"
-            className="w-full max-w-full object-cover aspect-square"
+            className="w-full max-w-full object-cover aspect-square rounded-[28px]"
           />
-          <div className="flex flex-col gap-3 p-6">
+          <div className="flex flex-col gap-3 pl-6 pr-6">
             <p className="text-sm" style={{ color: 'var(--muted-color)' }}>
               When I&apos;m not coding, I&apos;m probably traveling.
             </p>
@@ -96,7 +175,7 @@ function Skills() {
         </div>
 
         <div className={`${cardBase} gap-5 sm:col-span-1 lg:col-span-2`}>
-          <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--muted-color)' }}>
+          <p className="text-xl uppercase tracking-[0.2em]" style={{ color: 'var(--muted-color)' }}>
             Around the internet
           </p>
           <div className="flex flex-col gap-3">
@@ -180,21 +259,53 @@ function Skills() {
             <span>On repeat while I code</span>
           </div>
           <div className="flex gap-4">
-            <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-[#22c55e] to-[#15803d]" />
-            <div className="flex-1">
-              <p className="text-base font-medium">Your favorite track here</p>
-              <p className="text-sm" style={{ color: 'var(--muted-color)' }}>
-                Lo-fi, indie, or anything that keeps focus.
+            <div className="relative group cursor-pointer h-14 w-14 shrink-0" onClick={handlePlaySnippet}>
+              <img
+                src={realityClub}
+                alt="Reality Club album cover"
+                className={`h-full w-full rounded-xl object-cover transition-all duration-300 ${isPlaying ? 'scale-95 opacity-60' : 'group-hover:opacity-60'}`}
+              />
+              
+              {/* Icon Play/Pause Overlay */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className={`flex h-8 w-8 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-all duration-300 ${isPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                  {isPlaying ? (
+                    <FaPause className="text-white text-xs" />
+                  ) : (
+                    <FaPlay className="text-white text-xs ml-0.5" />
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-base font-medium truncate">Reality Club</p>
+              <p className="text-sm truncate" style={{ color: 'var(--muted-color)' }}>
+                Am I Bothering You?
               </p>
-              <div className="mt-3 h-1 rounded-full bg-white/10">
-                <span className="block h-full w-3/5 rounded-full bg-[#22c55e]" />
+              
+              <div className="mt-3 h-1 w-full rounded-full bg-white/10 overflow-hidden">
+                <div 
+                  className="h-full rounded-full bg-[#22c55e]"
+                  style={{ 
+                    width: `${progress}%`,
+                    // Kita pakai transition width 0s atau sangat kecil biar smooth mengikuti JS
+                    transition: 'width 0.1s linear' 
+                  }} 
+                />
+              </div>
+              <div className="mt-1 flex justify-end">
+                 <span className="text-[10px] text-white/40">
+                   {isPlaying ? Math.min(Math.floor((progress / 100) * SONG_CONFIG.duration), SONG_CONFIG.duration) : 0}s
+                 </span>
               </div>
             </div>
           </div>
+          {/* Hidden Audio Element */}
+          <audio ref={audioRef} src={songFile} preload="auto" />
         </div>
 
         <div className={`${cardBase} sm:col-span-2 lg:col-span-5`}>
-          <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--muted-color)' }}>
+          <p className="text-xl uppercase tracking-[0.2em]" style={{ color: 'var(--muted-color)' }}>
             Other tools I trust
           </p>
           <div className="flex flex-col gap-4">
@@ -233,7 +344,7 @@ function Skills() {
               <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--muted-color)' }}>
                 Based in
               </p>
-              <p className="text-lg font-semibold">Jakarta, Indonesia</p>
+              <p className="text-lg font-semibold">Lampung, Indonesia</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
@@ -252,7 +363,7 @@ function Skills() {
           className={`${cardBase} gap-4 sm:col-span-2 lg:col-span-12 lg:flex-row lg:items-center lg:justify-between`}
         >
           <div className="flex flex-col gap-3">
-            <p className="text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--muted-color)' }}>
+            <p className="text-xl uppercase tracking-[0.2em]" style={{ color: 'var(--muted-color)' }}>
               Let&apos;s build something
             </p>
             <h3 className="font-['Oswald',sans-serif] text-3xl">

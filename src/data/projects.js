@@ -29,7 +29,7 @@ export const PROJECTS_DATA = [
     title: "System Predict Mental Health Diagnosis",
     image : project3,
     description: "A web application that uses machine learning to predict mental health issues based on user input. Using PHQ-9, PSS-10 and GAD-7 questionnaires to assess depression, stress and anxiety levels.",
-    tech: ["React", "Python", "Flask", "Machine Learning"],
+    tech: ["React", "Python", "ML", "Node.js"],
     demoLink: "https://mental-diagnose.vercel.app/",
     githubLink: "https://github.com/Taufiqu/Sistem-Pakar-Diagnosa-Kesehatan-Mental"
   },
@@ -38,7 +38,7 @@ export const PROJECTS_DATA = [
     title: "Dashboard Cardiovascular Disease Prediction",
     image : project4,
     description: "A web application that uses machine learning to predict cardiovascular disease based on user input. Using various features to assess the risk of cardiovascular disease.",
-    tech: ["React", "Python", "Flask", "Machine Learning"],
+    tech: ["React", "Python", "ML", "Node.js"],
     demoLink: "https://dashboard-cardiovascular-predict.vercel.app/",
     githubLink: "https://github.com/Taufiqu/Dashboard_Cardiovascular_Predict"
   },
