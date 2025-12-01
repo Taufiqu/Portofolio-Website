@@ -1,0 +1,88 @@
+/* src/index.css (Versi Final Gabungan) */
+
+/* 1. Impor font kita */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Oswald:wght@700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 2. Reset dasar (diambil dari file Vite Anda) */
+:root {
+  /* Menggunakan font kita, bukan 'system-ui' */
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* === PUSAT KONTROL WARNA (DEFAULT: DARK MODE) === */
+  --color-background: #121212;
+  --color-text: #E0E0E0;
+  --color-primary: #00FF7F;
+  --color-card-bg: #1A1A1A;
+  --color-outline: #333333;
+}
+
+/* 3. ALTERNATIF: LIGHT MODE (saat <body> punya class .light-mode) */
+.light-mode {
+  --color-background: #FFFFFF;
+  --color-text: #222222;
+  --color-primary: #00A04A;
+  --color-card-bg: #F5F5F5;
+  --color-outline: #DDDDDD;
+}
+
+/* 4. Aturan Global */
+body {
+  margin: 0;
+  min-height: 100vh;
+  
+  /* Menggunakan variabel kita */
+  background-color: var(--color-background);
+  color: var(--color-text);
+
+  /* Transisi ini membuat pergantian mode terlihat mulus */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 5. Aturan global untuk Tautan (Link) */
+a {
+  font-weight: 500;
+  text-decoration: none; /* Kita biarkan 'none' saja */
+  color: var(--color-primary); /* Tautan akan berwarna hijau primer */
+  transition: color 0.3s ease;
+}
+a:hover {
+  opacity: 0.8; /* Sedikit pudar saat di-hover */
+}
+
+/* 6. Aturan global untuk Tombol (jika Anda ingin) */
+button {
+  border-radius: 8px;
+  border: 1px solid var(--color-outline);
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--color-card-bg);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: var(--color-primary);
+}
+
+/* 7. Helper class untuk judul section */
+.section-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 3rem;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 50px;
+}
