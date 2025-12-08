@@ -30,6 +30,10 @@ const SONG_CONFIG = {
   volume: 0.5     // Volume 50%
 };
 
+const MY_EMAIL = "taufiqu.dev@gmail.com";
+
+const GITHUB_USERNAME = "Taufiqu";
+
 function Skills() {
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -106,9 +110,16 @@ function Skills() {
     };
   }, []);
 
+  const [showCopyToast, setShowCopyToast] = useState(false);
   const handleCopyEmail = () => {
     if (navigator?.clipboard) {
-      navigator.clipboard.writeText('taufiqu.dev@gmail.com');
+      navigator.clipboard.writeText(MY_EMAIL);
+      setShowCopyToast(true);
+      
+      // Hilangkan notif setelah 2 detik
+      setTimeout(() => {
+        setShowCopyToast(false);
+      }, 2000);
     }
   };
 
@@ -253,54 +264,77 @@ function Skills() {
         </div>
 
         {/* Row 3 - Spotify, tools grid, location/time */}
-        <div className={`${cardBase} sm:col-span-1 lg:col-span-4`}>
-          <div className="flex items-center gap-3 text-sm" style={{ color: 'var(--muted-color)' }}>
-            <FaSpotify className="text-[#22c55e]" />
-            <span>On repeat while I code</span>
-          </div>
-          <div className="flex gap-4">
-            <div className="relative group cursor-pointer h-14 w-14 shrink-0" onClick={handlePlaySnippet}>
-              <img
-                src={realityClub}
-                alt="Reality Club album cover"
-                className={`h-full w-full rounded-xl object-cover transition-all duration-300 ${isPlaying ? 'scale-95 opacity-60' : 'group-hover:opacity-60'}`}
-              />
+        {/* === CARD GABUNGAN: SPOTIFY + GITHUB STATS === */}
+        <div className={`${cardBase} sm:col-span-1 lg:col-span-4 flex flex-col gap-6`}> 
+          {/* Perubahan 1: Ganti 'justify-between' jadi 'gap-6' biar jaraknya konsisten dan ga maksa jauh */}
+
+          {/* --- BAGIAN 1: MUSIC PLAYER --- */}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-3 text-sm" style={{ color: 'var(--muted-color)' }}>
+              <FaSpotify className="text-[#22c55e]" />
+              <span>On repeat while I code</span>
+            </div>
+            
+            <div className="flex gap-4 items-center">
+              <div className="relative group cursor-pointer h-14 w-14 shrink-0" onClick={handlePlaySnippet}>
+                <img
+                  src={realityClub}
+                  alt="Reality Club"
+                  className={`h-full w-full rounded-xl object-cover transition-all duration-300 ${isPlaying ? 'scale-95 opacity-60' : 'group-hover:opacity-60'}`}
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className={`flex h-8 w-8 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-all duration-300 ${isPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                    {isPlaying ? <FaPause className="text-white text-xs" /> : <FaPlay className="text-white text-xs ml-0.5" />}
+                  </div>
+                </div>
+              </div>
               
-              {/* Icon Play/Pause Overlay */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className={`flex h-8 w-8 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm transition-all duration-300 ${isPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-                  {isPlaying ? (
-                    <FaPause className="text-white text-xs" />
-                  ) : (
-                    <FaPlay className="text-white text-xs ml-0.5" />
-                  )}
+              <div className="flex-1 min-w-0">
+                <p className="text-base font-medium truncate">Reality Club</p>
+                <p className="text-sm truncate" style={{ color: 'var(--muted-color)' }}>Am I Bothering You?</p>
+                <div className="mt-2 h-1 w-full rounded-full bg-white/10 overflow-hidden">
+                  <div 
+                    className="h-full rounded-full bg-[#22c55e]"
+                    style={{ width: `${progress}%`, transition: 'width 0.1s linear' }} 
+                  />
                 </div>
               </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-base font-medium truncate">Reality Club</p>
-              <p className="text-sm truncate" style={{ color: 'var(--muted-color)' }}>
-                Am I Bothering You?
-              </p>
-              
-              <div className="mt-3 h-1 w-full rounded-full bg-white/10 overflow-hidden">
-                <div 
-                  className="h-full rounded-full bg-[#22c55e]"
-                  style={{ 
-                    width: `${progress}%`,
-                    // Kita pakai transition width 0s atau sangat kecil biar smooth mengikuti JS
-                    transition: 'width 0.1s linear' 
-                  }} 
-                />
-              </div>
-              <div className="mt-1 flex justify-end">
-                 <span className="text-[10px] text-white/40">
-                   {isPlaying ? Math.min(Math.floor((progress / 100) * SONG_CONFIG.duration), SONG_CONFIG.duration) : 0}s
-                 </span>
-              </div>
+          </div>
+
+          {/* --- PEMBATAS HALUS --- */}
+          <div className="h-px w-full bg-white/10" /> 
+          {/* Perubahan 2: Pake h-px biasa, marginnya diatur sama parent gap */}
+
+          {/* --- BAGIAN 2: GITHUB STATS --- */}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-3 text-sm" style={{ color: 'var(--muted-color)' }}>
+              <FaGithub className="text-[var(--color-primary)] text-lg" />
+              <span>Coding Activity</span>
+            </div>
+
+            <div className="flex items-center justify-center overflow-hidden rounded-lg bg-black/20 p-2">
+              <img 
+                src="https://github-readme-streak-stats.herokuapp.com/?user=Taufiqu&theme=transparent&hide_border=true&stroke=00FF7F&ring=00FF7F&fire=00FF7F&currStreakNum=E0E0E0&sideNums=E0E0E0&currStreakLabel=00FF7F&sideLabels=00FF7F&background=transparent"
+                alt="Github Streak"
+                loading="lazy"
+                className="w-full object-contain hover:scale-[1.02] transition-transform duration-300"
+              />
+            </div>
+            
+            <div className="flex justify-between text-[10px] uppercase tracking-wider font-medium pt-1">
+              <span style={{ color: 'var(--muted-color)' }}>2024 Summary</span>
+              <a 
+                href="https://github.com/Taufiqu" 
+                target="_blank" 
+                rel="noreferrer"
+                className="text-[var(--color-primary)] hover:underline"
+              >
+                View Profile ↗
+              </a>
             </div>
           </div>
-          {/* Hidden Audio Element */}
+
           <audio ref={audioRef} src={songFile} preload="auto" />
         </div>
 
@@ -384,13 +418,30 @@ function Skills() {
             <button
               type="button"
               onClick={handleCopyEmail}
-              className="rounded-full border border-white/15 px-6 py-2 text-sm font-semibold text-[var(--color-text)] transition hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)]/10"
+              className="group relative rounded-full border border-white/15 px-6 py-2 text-sm font-semibold text-[var(--color-text)] transition hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 active:scale-95"
             >
-              Copy email
+              {/* Teks Button berubah dikit pas dicopy biar interaktif */}
+              <span className={showCopyToast ? "text-[var(--color-primary)]" : ""}>
+                {showCopyToast ? "Copied! ✨" : "Copy email"}
+              </span>
             </button>
           </div>
         </div>
       </div>
+
+      <div 
+        className={`fixed bottom-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-full border border-[var(--color-primary)]/50 bg-black/80 px-6 py-3 text-sm font-medium text-[var(--color-text)] shadow-[0_0_30px_rgba(0,255,127,0.3)] backdrop-blur-md transition-all duration-500 ${
+          showCopyToast 
+            ? 'translate-y-0 opacity-100' 
+            : 'translate-y-10 opacity-0 pointer-events-none'
+        }`}
+      >
+        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-primary)] text-black text-xs">
+          ✓
+        </span>
+        Email copied to clipboard!
+      </div>
+
     </section>
   );
 }
