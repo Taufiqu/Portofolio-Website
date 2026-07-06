@@ -37,6 +37,9 @@ export const metadata = {
     description: 'Muhammad Hafizh Taufiqurrohman - Computer Science student and Software Engineer focusing on scalable backend engines and high-performance architectures.',
     images: ['/og-image.png'],
   },
+  verification: {
+    google: 'hAYHjJjj3sxwT1wQufSyBrcsWMX8YtvOLibbUDt7-TE',
+  },
 };
 
 export default function RootLayout({ children }) {
