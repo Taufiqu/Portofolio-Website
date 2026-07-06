@@ -1,7 +1,13 @@
 import './globals.css';
 
+const baseUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : 'https://taufiqu.dev';
+
 export const metadata = {
-  metadataBase: new URL('https://taufiqu.dev'),
+  metadataBase: new URL(baseUrl),
   title: 'Taufiqu | Systems Architect & Full-Stack Engineer',
   description: 'Muhammad Hafizh Taufiqurrohman - Computer Science student and Software Engineer focusing on scalable backend engines, server optimizations, and high-performance client-side architectures.',
   keywords: ['Taufiqu', 'Muhammad Hafizh Taufiqurrohman', 'Software Engineer', 'Systems Architect', 'Indonesia', 'Laravel', 'React', 'Next.js', 'Web Developer'],
