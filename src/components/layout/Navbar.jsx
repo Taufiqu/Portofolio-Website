@@ -51,7 +51,7 @@ function Navbar() {
         </a>
 
         {/* Nav items */}
-        <ul className="flex items-center gap-2 sm:gap-4 font-mono-code text-[11px] text-[var(--color-text-muted)]">
+        <ul className="flex items-center gap-2 sm:gap-4 font-mono-code text-[10px] sm:text-[11px] text-[var(--color-text-muted)]">
           <li>
             <a 
               href="#projects" 
@@ -72,11 +72,20 @@ function Navbar() {
           </li>
           <li>
             <a 
+              href="#journey" 
+              onClick={(e) => handleScrollTo(e, 'journey')}
+              className="px-2.5 py-1.5 rounded hover:text-white hover:bg-white/5 transition"
+            >
+              [ 03. HISTORY ]
+            </a>
+          </li>
+          <li>
+            <a 
               href="#contact" 
               onClick={(e) => handleScrollTo(e, 'contact')}
               className="px-2.5 py-1.5 rounded hover:text-white hover:bg-white/5 transition"
             >
-              [ 03. CONNECT ]
+              [ 04. CONNECT ]
             </a>
           </li>
         </ul>

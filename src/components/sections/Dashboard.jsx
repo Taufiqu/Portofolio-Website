@@ -441,41 +441,8 @@ function Dashboard() {
               <span>PING: {systemStats.latency}MS</span>
             </div>
           </div>
-
-          {/* ====================================================
-              ROW 3: EXPERIENCE JOURNAL LOGS (TIMELINE)
-             ==================================================== */}
-
-          {/* Card 6: Journey Log - Spans 12 cols */}
-          <div className="bento-card p-6 md:col-span-12 flex flex-col justify-between">
-            <div className="flex items-center gap-2 mb-6">
-              <FaMicrochip className="text-[var(--color-primary)]" />
-              <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] font-mono-code">Systems Architecture logs (Timeline)</span>
-            </div>
-
-            {/* Logs console */}
-            <div className="rounded-xl bg-black/40 p-5 border border-white/5 font-mono-code text-xs space-y-4 max-h-[320px] overflow-y-auto scrollbar-thin">
-              {JOURNEY_DATA.map((j) => (
-                <div key={j.id} className="border-b border-white/5 pb-4 last:border-0 last:pb-0">
-                  <div className="flex items-center justify-between text-[11px] mb-1">
-                    <span className="text-[var(--color-primary)] font-bold">[{j.year}] SYS_LOG_LOADED:</span>
-                    <span className="text-[var(--color-accent-green)] font-semibold uppercase">[{j.type}]</span>
-                  </div>
-                  <div className="text-white font-bold text-sm mb-1.5">{j.title}</div>
-                  <p className="text-[var(--color-text-muted)] leading-relaxed text-[11px] mb-3">{j.description}</p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {j.skills.map(s => (
-                      <span key={s} className="bg-white/5 border border-white/10 rounded px-2 py-0.5 text-[9px] text-[var(--color-text-muted)] uppercase">
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
 
-        </div>
 
         {/* Copy notification popup */}
         <div 
