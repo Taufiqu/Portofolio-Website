@@ -27,16 +27,7 @@ import {
 } from 'react-icons/si';
 import { MdLocationOn, MdSchedule } from 'react-icons/md';
 
-import realityClub from '../../assets/reality-club.webp';
-const songFile = '/audio/reality-club.mp3';
-
 const MY_EMAIL = "taufiqu.dev@gmail.com";
-
-const SONG_CONFIG = {
-  start: 52,      // Start at 52 seconds (0:52)
-  duration: 10,   // Play for 10 seconds
-  volume: 0.5     // 50% Volume
-};
 
 function Dashboard() {
   // CLI States
@@ -57,6 +48,12 @@ function Dashboard() {
   // Spotify Player States
   const [isPlaying, setIsPlaying] = useState(false);
   const [songProgress, setSongProgress] = useState(0);
+  const [songInfo, setSongInfo] = useState({
+    title: 'Loading...',
+    artist: 'Booting Audio Node',
+    cover: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&auto=format&fit=crop',
+    audioUrl: null
+  });
   const audioRef = useRef(null);
   const rafRef = useRef(null);
 
@@ -77,6 +74,56 @@ function Dashboard() {
       }));
     }, 3000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Fetch Random Coding Music on Mount
+  useEffect(() => {
+    let active = true;
+
+    const fetchSong = async () => {
+      try {
+        const { PLAYLIST_DATA } = await import('../../data/playlist');
+        const randomItem = PLAYLIST_DATA[Math.floor(Math.random() * PLAYLIST_DATA.length)];
+        const searchTerm = `${randomItem.title} ${randomItem.artist}`;
+        
+        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(searchTerm)}&limit=1&media=music`);
+        const data = await res.json();
+        
+        if (data.results && data.results.length > 0 && active) {
+          const track = data.results[0];
+          setSongInfo({
+            title: track.trackName,
+            artist: track.artistName,
+            cover: track.artworkUrl100.replace('100x100bb', '300x300bb'),
+            audioUrl: track.previewUrl
+          });
+        } else if (active) {
+          // Fallback to Reality Club if search fails
+          setSongInfo({
+            title: 'Am I Bothering You?',
+            artist: 'Reality Club',
+            cover: 'https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/bf/f4/1e/bff41e24-912b-31e2-b130-4e2b027d14d2/cover.jpg/300x300bb.jpg',
+            audioUrl: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/0f/c9/2c/0fc92c81-80a2-2309-8800-244c0c16922d/mzaf_16409890494436531980.plus.aac.p.m4a'
+          });
+        }
+      } catch (err) {
+        console.error('iTunes fetch failed:', err);
+        if (active) {
+          setSongInfo({
+            title: 'Am I Bothering You?',
+            artist: 'Reality Club',
+            cover: 'https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/bf/f4/1e/bff41e24-912b-31e2-b130-4e2b027d14d2/cover.jpg/300x300bb.jpg',
+            audioUrl: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/0f/c9/2c/0fc92c81-80a2-2309-8800-244c0c16922d/mzaf_16409890494436531980.plus.aac.p.m4a'
+          });
+        }
+      }
+    };
+
+    fetchSong();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const formatUptime = () => {
@@ -139,45 +186,31 @@ function Dashboard() {
   // Spotify Audio Actions
   const handlePlaySnippet = () => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !songInfo.audioUrl) return;
     if (isPlaying) {
-      pauseAudio();
+      audio.pause();
+      setIsPlaying(false);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     } else {
-      playAudio();
+      audio.volume = 0.4;
+      audio.play()
+        .then(() => {
+          setIsPlaying(true);
+          rafRef.current = requestAnimationFrame(updateProgress);
+        })
+        .catch(err => console.log('Playback failed:', err));
     }
-  };
-
-  const playAudio = () => {
-    const audio = audioRef.current;
-    audio.currentTime = SONG_CONFIG.start;
-    audio.volume = SONG_CONFIG.volume;
-    audio.play()
-      .then(() => {
-        setIsPlaying(true);
-        rafRef.current = requestAnimationFrame(updateProgress);
-      })
-      .catch(err => console.log('Audio playback failed:', err));
-  };
-
-  const pauseAudio = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.pause();
-    setIsPlaying(false);
-    if (rafRef.current) {
-      cancelAnimationFrame(rafRef.current);
-    }
-    setSongProgress(0);
   };
 
   const updateProgress = () => {
     const audio = audioRef.current;
     if (!audio) return;
-    const currentPlayTime = audio.currentTime - SONG_CONFIG.start;
-    const progressPercent = (currentPlayTime / SONG_CONFIG.duration) * 100;
+    const progressPercent = (audio.currentTime / audio.duration) * 100 || 0;
 
-    if (progressPercent >= 100 || audio.paused) {
-      pauseAudio();
+    if (audio.ended) {
+      setIsPlaying(false);
+      setSongProgress(0);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     } else {
       setSongProgress(progressPercent);
       rafRef.current = requestAnimationFrame(updateProgress);
@@ -355,11 +388,13 @@ function Dashboard() {
                 className="relative group cursor-pointer h-14 w-14 shrink-0 rounded-xl overflow-hidden border border-white/10"
                 onClick={handlePlaySnippet}
               >
-                <img 
-                  src={realityClub.src} 
-                  alt="Reality Club cover" 
-                  className={`h-full w-full object-cover transition-opacity duration-300 ${isPlaying ? 'opacity-60' : 'group-hover:opacity-60'}`}
-                />
+                {songInfo.cover && (
+                  <img 
+                    src={songInfo.cover} 
+                    alt="Album cover" 
+                    className={`h-full w-full object-cover transition-opacity duration-300 ${isPlaying ? 'opacity-60' : 'group-hover:opacity-60'}`}
+                  />
+                )}
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className={`flex h-8 w-8 items-center justify-center rounded-full bg-black/60 border border-white/20 backdrop-blur-sm transition-all duration-300 ${isPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
                     {isPlaying ? <FaPause className="text-white text-xs" /> : <FaPlay className="text-white text-xs ml-0.5" />}
@@ -368,8 +403,8 @@ function Dashboard() {
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate text-white">Reality Club</p>
-                <p className="text-xs truncate text-[var(--color-text-muted)] mb-2">Am I Bothering You?</p>
+                <p className="text-sm font-semibold truncate text-white">{songInfo.title}</p>
+                <p className="text-xs truncate text-[var(--color-text-muted)] mb-2">{songInfo.artist}</p>
                 
                 {/* Custom Audio Progress bar */}
                 <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
@@ -382,10 +417,10 @@ function Dashboard() {
             </div>
 
             <div className="text-[9px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] border-t border-white/5 pt-3">
-              Snippet: 10s audio node
+              Source: iTunes API // YTM Playlist
             </div>
             
-            <audio ref={audioRef} src={songFile} preload="auto" />
+            <audio ref={audioRef} src={songInfo.audioUrl || ''} preload="auto" />
           </div>
 
           {/* Card 4: GitHub Stats Streaks - Spans 4 cols */}
