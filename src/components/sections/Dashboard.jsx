@@ -61,6 +61,7 @@ function Dashboard() {
   const [showCopyToast, setShowCopyToast] = useState(false);
 
   const cliEndRef = useRef(null);
+  const isInitialMount = useRef(true);
   const startTimeRef = useRef(Date.now());
 
   // System Stats Simulation
@@ -178,6 +179,10 @@ function Dashboard() {
   };
 
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     if (cliEndRef.current) {
       cliEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
