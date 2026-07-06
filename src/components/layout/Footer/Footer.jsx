@@ -22,7 +22,7 @@ function Footer() {
         </a>
       </div>
       <div className="space-y-1 text-[var(--color-text)]/70">
-        <p>Built with React &amp; Vite.</p>
+        <p>Built with Next.js &amp; Tailwind CSS.</p>
         <p>© {new Date().getFullYear()} Taufiqu. All Rights Reserved.</p>
       </div>
     </footer>

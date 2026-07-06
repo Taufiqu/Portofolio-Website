@@ -1,0 +1,141 @@
+/* src/app/globals.css - High-Performance Systems Architect Theme */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* === COLOR SYSTEM: OBSIDIAN + CYAN & EMERALD === */
+  --color-background: #0B0F17;
+  --color-card-bg: #161F30;
+  --color-primary: #00F2FE;
+  --color-accent-green: #10B981;
+  --color-text: #E2E8F0;
+  --color-text-muted: #94A3B8;
+  --color-outline: rgba(255, 255, 255, 0.08);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-card-bg);
+}
+
+/* Custom Typing Animation */
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.terminal-cursor::after {
+  content: '_';
+  animation: blink 1s step-start infinite;
+  color: var(--color-primary);
+  margin-left: 2px;
+}
+
+/* Blinking dot */
+@keyframes pulse-green {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+}
+
+.blink-dot {
+  animation: pulse-green 2s infinite;
+}
+
+/* Monospace font utility classes */
+.font-mono-code {
+  font-family: 'Fira Code', 'Courier New', Courier, monospace;
+}
+
+/* Bento Hover Lift & Glow Effect */
+.bento-card {
+  position: relative;
+  background-color: var(--color-card-bg);
+  border: 1px solid var(--color-outline);
+  border-radius: 20px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.bento-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(0, 242, 254, 0.4) 0%, transparent 60%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.bento-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 242, 254, 0.3);
+  box-shadow: 0 12px 30px -10px rgba(0, 242, 254, 0.15);
+}
+
+.bento-card:hover::before {
+  opacity: 1;
+}
+
+/* Terminal Log Entry style */
+.log-line {
+  display: flex;
+  gap: 8px;
+  line-height: 1.4;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+}
+.log-tag {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+.log-tag-system {
+  color: var(--color-accent-green);
+  flex-shrink: 0;
+}
+.log-tag-err {
+  color: #EF4444;
+  flex-shrink: 0;
+}
