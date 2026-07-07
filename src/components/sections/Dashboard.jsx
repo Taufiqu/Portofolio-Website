@@ -768,7 +768,7 @@ function Dashboard() {
               Source: iTunes API // YTM Playlist
             </div>
             
-            <audio ref={audioRef} src={songInfo.audioUrl || ''} preload="auto" />
+            <audio ref={audioRef} src={songInfo.audioUrl || null} preload="auto" />
           </div>
 
           {/* Card 4: GitHub Stats Dashboard - Spans 4 cols */}
