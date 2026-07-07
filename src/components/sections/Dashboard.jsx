@@ -116,9 +116,9 @@ function Dashboard() {
         const sessionKey = 'taufiqu_session_visited';
         const isNewSession = !sessionStorage.getItem(sessionKey);
         
-        let url = 'https://api.counterapi.dev/v1/taufiqu/portfolio';
+        let url = '/api/visitors?action=get';
         if (isNewSession) {
-          url = 'https://api.counterapi.dev/v1/taufiqu/portfolio/up';
+          url = '/api/visitors?action=up';
           sessionStorage.setItem(sessionKey, 'true');
         }
         
