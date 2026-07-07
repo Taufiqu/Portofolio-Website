@@ -24,11 +24,11 @@ import {
 } from 'react-icons/fa';
 import { 
   SiReact, 
-  SiLaravel, 
+  SiNextdotjs,
   SiTailwindcss, 
-  SiMongodb, 
-  SiNodedotjs, 
-  SiTypescript 
+  SiJavascript, 
+  SiSupabase, 
+  SiVercel
 } from 'react-icons/si';
 import { MdLocationOn, MdSchedule, MdDevices } from 'react-icons/md';
 
@@ -619,24 +619,28 @@ function Dashboard() {
               <p className="text-[10px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] mb-3">Loaded System Modules:</p>
               <div className="flex flex-wrap gap-2">
                 <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                  <SiLaravel className="text-rose-500" />
-                  <span>Laravel</span>
-                </span>
-                <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
                   <SiReact className="text-sky-400" />
                   <span>React</span>
                 </span>
                 <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                  <SiMongodb className="text-emerald-500" />
-                  <span>MongoDB</span>
+                  <SiNextdotjs className="text-white" />
+                  <span>Next.js</span>
                 </span>
                 <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                  <SiNodedotjs className="text-green-500" />
-                  <span>Node.js</span>
+                  <SiJavascript className="text-yellow-400" />
+                  <span>JS</span>
                 </span>
                 <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                  <SiTypescript className="text-blue-500" />
-                  <span>TS</span>
+                  <SiTailwindcss className="text-cyan-400" />
+                  <span>Tailwind</span>
+                </span>
+                <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
+                  <SiSupabase className="text-emerald-500" />
+                  <span>Supabase</span>
+                </span>
+                <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
+                  <SiVercel className="text-white" />
+                  <span>Vercel</span>
                 </span>
               </div>
             </div>
