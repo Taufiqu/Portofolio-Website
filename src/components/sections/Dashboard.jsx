@@ -87,6 +87,8 @@ function Dashboard() {
   const [showCopyToast, setShowCopyToast] = useState(false);
   const [isGlitchActive, setIsGlitchActive] = useState(false);
   const [activeTheme, setActiveTheme] = useState('cyan');
+  const [cliMode, setCliMode] = useState('normal'); // 'normal', 'guestbook_name', 'guestbook_message'
+  const [guestbookTempName, setGuestbookTempName] = useState('');
 
   const logsContainerRef = useRef(null);
   const isInitialMount = useRef(true);
@@ -349,6 +351,89 @@ function Dashboard() {
     const trimmedInput = cliInput.trim();
     if (!trimmedInput) return;
 
+    // Check for exit/cancel in interactive modes
+    if (cliMode !== 'normal' && (trimmedInput.toLowerCase() === 'exit' || trimmedInput.toLowerCase() === 'cancel')) {
+      const promptPrefix = cliMode === 'guestbook_name' ? 'name:~$ ' : 'msg:~$ ';
+      setCliLogs(prev => [...prev, 
+        { type: 'input', text: `${promptPrefix}${cliInput}` },
+        { type: 'system', text: '✖ Wizard aborted. Returning to normal terminal mode.' }
+      ]);
+      setCliMode('normal');
+      setGuestbookTempName('');
+      setCliInput('');
+      return;
+    }
+
+    // Interactive Mode: Name Input
+    if (cliMode === 'guestbook_name') {
+      const sanitized = trimmedInput.replace(/<[^>]*>/g, '').trim().substring(0, 50);
+      if (!sanitized) {
+        setCliLogs(prev => [...prev, 
+          { type: 'input', text: `name:~$ ${cliInput}` },
+          { type: 'err', text: 'Name cannot be empty. Please enter your name:' }
+        ]);
+        setCliInput('');
+        return;
+      }
+      setGuestbookTempName(sanitized);
+      setCliLogs(prev => [...prev, 
+        { type: 'input', text: `name:~$ ${cliInput}` },
+        { type: 'system', text: `Name set to: "${sanitized}"` },
+        { type: 'system', text: 'Enter message (max 200 chars, or type "exit" to cancel):' }
+      ]);
+      setCliMode('guestbook_message');
+      setCliInput('');
+      return;
+    }
+
+    // Interactive Mode: Message Input
+    if (cliMode === 'guestbook_message') {
+      const sanitized = trimmedInput.replace(/<[^>]*>/g, '').trim().substring(0, 200);
+      if (!sanitized) {
+        setCliLogs(prev => [...prev, 
+          { type: 'input', text: `msg:~$ ${cliInput}` },
+          { type: 'err', text: 'Message cannot be empty. Please enter your message:' }
+        ]);
+        setCliInput('');
+        return;
+      }
+
+      setCliLogs(prev => [...prev, 
+        { type: 'input', text: `msg:~$ ${cliInput}` },
+        { type: 'system', text: '📡 Connecting to database...' }
+      ]);
+
+      fetch('/api/guestbook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: guestbookTempName, message: sanitized })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('API failed');
+        return res.json();
+      })
+      .then(data => {
+        setCliLogs(prev => [...prev, 
+          { type: 'system', text: '✔ Message successfully written to Supabase Guestbook!' },
+          { type: 'output', text: `[${data.name}]: "${data.message}"` }
+        ]);
+      })
+      .catch(err => {
+        console.error('Supabase write failed:', err);
+        setCliLogs(prev => [...prev, 
+          { type: 'err', text: '✖ Database write failed. Please check table settings.' }
+        ]);
+      })
+      .finally(() => {
+        setCliMode('normal');
+        setGuestbookTempName('');
+      });
+
+      setCliInput('');
+      return;
+    }
+
+    // Normal Command Mode
     const parts = trimmedInput.split(/\s+/);
     const mainCmd = parts[0].toLowerCase();
 
@@ -357,7 +442,7 @@ function Dashboard() {
 
     switch (mainCmd) {
       case 'help':
-        response.push({ type: 'output', text: 'Available commands: about | skills | logs | contact | system | audio [play|pause|next] | cv | clear' });
+        response.push({ type: 'output', text: 'Available commands: about | skills | logs | contact | system | guestbook [read|write] | audio [play|pause|next] | cv | clear' });
         break;
       case 'about':
         response.push({ type: 'output', text: 'Muhammad Hafizh - Computer Science Student & Systems Architect. Focuses on full-stack web development and system scale.' });
@@ -389,6 +474,43 @@ function Dashboard() {
         response.push({ type: 'system', text: `             DB Query: ${dbPing} MS` });
         response.push({ type: 'system', text: `             Edge Ping: ${edgePing} MS` });
         response.push({ type: 'system', text: `             Uptime: ${h}:${m}:${s}` });
+        break;
+      }
+      case 'guestbook': {
+        const sub = parts[1] ? parts[1].toLowerCase() : '';
+        if (sub === 'read' || sub === 'list' || !sub) {
+          response.push({ type: 'system', text: '📡 Fetching entries from Supabase...' });
+          fetch('/api/guestbook')
+            .then(res => {
+              if (!res.ok) throw new Error('API error');
+              return res.json();
+            })
+            .then(data => {
+              if (!data || data.length === 0) {
+                setCliLogs(prev => [...prev, { type: 'output', text: 'ℹ Guestbook is empty. Be the first to write!' }]);
+                return;
+              }
+              const listLogs = [{ type: 'system', text: '--- SUPABASE GUESTBOOK ENTRIES ---' }];
+              data.forEach(item => {
+                const dateStr = new Date(item.created_at).toLocaleDateString('id-ID', {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                });
+                listLogs.push({ type: 'output', text: `[${dateStr}] [${item.name}]: ${item.message}` });
+              });
+              setCliLogs(prev => [...prev, ...listLogs]);
+            })
+            .catch(err => {
+              console.error('Fetch guestbook failed:', err);
+              setCliLogs(prev => [...prev, { type: 'err', text: '✖ Failed to fetch guestbook logs.' }]);
+            });
+        } else if (sub === 'write') {
+          response.push({ type: 'system', text: '--- GUESTBOOK INTERACTIVE WIZARD ---' });
+          response.push({ type: 'system', text: 'Enter your name (max 50 chars, or type "exit" to abort):' });
+          setCliMode('guestbook_name');
+        } else {
+          response.push({ type: 'output', text: 'Usage: guestbook [read | write]' });
+        }
         break;
       }
       case 'audio': {
@@ -638,12 +760,20 @@ function Dashboard() {
 
               {/* Console Form Input */}
               <form onSubmit={handleCliSubmit} className="flex gap-2">
-                <span className="font-mono-code text-xs text-white self-center">~$</span>
+                <span className="font-mono-code text-xs text-white self-center">
+                  {cliMode === 'normal' ? '~$ ' : cliMode === 'guestbook_name' ? 'name:~$ ' : 'msg:~$ '}
+                </span>
                 <input 
                   type="text" 
                   value={cliInput}
                   onChange={(e) => setCliInput(e.target.value)}
-                  placeholder="type 'help'..." 
+                  placeholder={
+                    cliMode === 'normal' 
+                      ? "type 'help'..." 
+                      : cliMode === 'guestbook_name' 
+                      ? "Enter your name..." 
+                      : "Enter your message..."
+                  }
                   className="flex-1 bg-black/30 border border-white/10 rounded-lg p-2 font-mono-code text-xs text-white placeholder-white/20 outline-none focus:border-[var(--color-primary)]"
                 />
                 <button 
