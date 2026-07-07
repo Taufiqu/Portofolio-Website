@@ -85,6 +85,7 @@ function Dashboard() {
 
   // Copy Email State
   const [showCopyToast, setShowCopyToast] = useState(false);
+  const [isGlitchActive, setIsGlitchActive] = useState(false);
 
   const logsContainerRef = useRef(null);
   const isInitialMount = useRef(true);
@@ -317,21 +318,24 @@ function Dashboard() {
   // CLI Command Handler
   const handleCliSubmit = (e) => {
     e.preventDefault();
-    const cmd = cliInput.trim().toLowerCase();
-    if (!cmd) return;
+    const trimmedInput = cliInput.trim();
+    if (!trimmedInput) return;
+
+    const parts = trimmedInput.split(/\s+/);
+    const mainCmd = parts[0].toLowerCase();
 
     let response = [];
     response.push({ type: 'input', text: `guest@architect-os:~$ ${cliInput}` });
 
-    switch (cmd) {
+    switch (mainCmd) {
       case 'help':
-        response.push({ type: 'output', text: 'Available commands: about | skills | logs | contact | clear' });
+        response.push({ type: 'output', text: 'Available commands: about | skills | logs | contact | system | audio [play|pause|next] | cv | clear' });
         break;
       case 'about':
         response.push({ type: 'output', text: 'Muhammad Hafizh - Computer Science Student & Systems Architect. Focuses on full-stack web development and system scale.' });
         break;
       case 'skills':
-        response.push({ type: 'output', text: 'Core Stack: Laravel, React, Node.js, Python, MongoDB, MySQL, Tailwind CSS, TypeScript.' });
+        response.push({ type: 'output', text: 'Core Stack: React, Next.js, JavaScript, Tailwind CSS, Supabase, Vercel.' });
         break;
       case 'logs':
         JOURNEY_DATA.forEach(j => {
@@ -341,12 +345,76 @@ function Dashboard() {
       case 'contact':
         response.push({ type: 'output', text: `Email: ${MY_EMAIL} | GitHub: github.com/Taufiqu` });
         break;
+      case 'system':
+      case 'neofetch': {
+        const uptimeSec = Math.floor((Date.now() - startTimeRef.current) / 1000);
+        const h = Math.floor(uptimeSec / 3600).toString().padStart(2, '0');
+        const m = Math.floor((uptimeSec % 3600) / 60).toString().padStart(2, '0');
+        const s = (uptimeSec % 60).toString().padStart(2, '0');
+        
+        response.push({ type: 'system', text: '   /\\_/\\     SYSTEM INFORMATION:' });
+        response.push({ type: 'system', text: '  ( o.o )    -------------------' });
+        response.push({ type: 'system', text: `   > ^ <     OS: ${clientNode.os}` });
+        response.push({ type: 'system', text: `             Browser: ${clientNode.browser}` });
+        response.push({ type: 'system', text: `             Resolution: ${typeof window !== 'undefined' ? `${window.screen.width}x${window.screen.height}` : 'N/A'}` });
+        response.push({ type: 'system', text: `             FPS Render: ${fps} FPS` });
+        response.push({ type: 'system', text: `             DB Query: ${dbPing} MS` });
+        response.push({ type: 'system', text: `             Edge Ping: ${edgePing} MS` });
+        response.push({ type: 'system', text: `             Uptime: ${h}:${m}:${s}` });
+        break;
+      }
+      case 'audio': {
+        const sub = parts[1] ? parts[1].toLowerCase() : '';
+        if (sub === 'play') {
+          if (!isPlaying) {
+            handlePlaySnippet();
+            response.push({ type: 'system', text: '▶ Audio playback initiated.' });
+          } else {
+            response.push({ type: 'output', text: 'ℹ Audio is already playing.' });
+          }
+        } else if (sub === 'pause') {
+          if (isPlaying) {
+            handlePlaySnippet();
+            response.push({ type: 'system', text: '⏸ Audio playback paused.' });
+          } else {
+            response.push({ type: 'output', text: 'ℹ Audio is already paused.' });
+          }
+        } else if (sub === 'next' || sub === 'skip') {
+          handleNextSong();
+          response.push({ type: 'system', text: '⏭ Skipping to next track...' });
+        } else {
+          response.push({ type: 'output', text: 'Usage: audio [play | pause | next]' });
+        }
+        break;
+      }
+      case 'cv':
+        response.push({ type: 'system', text: '📂 Opening Curriculum Vitae...' });
+        if (typeof window !== 'undefined') {
+          window.open('/cv.html', '_blank');
+        }
+        break;
+      case 'sudo': {
+        const sub = parts[1] ? parts[1].toLowerCase() : '';
+        const arg1 = parts[2] ? parts[2].toLowerCase() : '';
+        const arg2 = parts[3] ? parts[3].toLowerCase() : '';
+        
+        if (sub === 'rm' && arg1 === '-rf' && arg2 === '/') {
+          response.push({ type: 'err', text: '⚠ WARNING: WIPE RUN LEVEL CORE DETECTED.' });
+          response.push({ type: 'err', text: 'SHUTTING DOWN SYSTEM...' });
+          setTimeout(() => {
+            setIsGlitchActive(true);
+          }, 1000);
+        } else {
+          response.push({ type: 'err', text: 'Error: Permission denied. Sudo powers are locked.' });
+        }
+        break;
+      }
       case 'clear':
         setCliLogs([]);
         setCliInput('');
         return;
       default:
-        response.push({ type: 'err', text: `Command not found: "${cmd}". Type "help" for valid console queries.` });
+        response.push({ type: 'err', text: `Command not found: "${mainCmd}". Type "help" for valid console queries.` });
     }
 
     setCliLogs(prev => [...prev, ...response]);
@@ -495,11 +563,13 @@ function Dashboard() {
   };
 
   return (
-    <section 
-      id="sandbox" 
-      className="bg-[#0B0F17] py-24 px-4 sm:px-6 lg:px-8 border-t border-white/5"
-    >
-      <div className="max-w-7xl mx-auto">
+    <>
+      {isGlitchActive && <GlitchOverlay onClose={() => setIsGlitchActive(false)} />}
+      <section 
+        id="sandbox" 
+        className="bg-[#0B0F17] py-24 px-4 sm:px-6 lg:px-8 border-t border-white/5"
+      >
+        <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="mb-16 text-center md:text-left">
           <p className="font-mono-code text-xs text-[var(--color-primary)] uppercase tracking-[0.2em] mb-2">
@@ -929,7 +999,110 @@ function Dashboard() {
         </div>
       </div>
     </section>
+    </>
   );
 }
 
 export default Dashboard;
+
+// Matrix red glitch overlay component
+function GlitchOverlay({ onClose }) {
+  const canvasRef = useRef(null);
+  const [countdown, setCountdown] = useState(4);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          onClose();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [onClose]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    let animationId;
+    
+    const resizeCanvas = () => {
+      if (typeof window !== 'undefined') {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+    };
+    
+    resizeCanvas();
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', resizeCanvas);
+    }
+
+    const chars = "0101010101010101010101010101010101010101";
+    const charArr = chars.split("");
+    const fontSize = 14;
+    const columns = Math.floor(canvas.width / fontSize) + 1;
+    const drops = Array(columns).fill(1);
+
+    const draw = () => {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#ff003c"; // Crimson red matrix rain
+      ctx.font = `${fontSize}px monospace`;
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = charArr[Math.floor(Math.random() * charArr.length)];
+        const x = i * fontSize;
+        const y = drops[i] * fontSize;
+
+        ctx.fillText(text, x, y);
+
+        if (y > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+      animationId = requestAnimationFrame(draw);
+    };
+
+    animationId = requestAnimationFrame(draw);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('resize', resizeCanvas);
+      }
+    };
+  }, []);
+
+  return (
+    <div className="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center font-mono-code p-4">
+      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none" />
+      <div className="relative z-10 text-center bg-black/80 border-2 border-red-500/30 p-8 max-w-lg rounded shadow-[0_0_50px_rgba(239,68,68,0.2)] select-none">
+        <div className="text-red-500 text-4xl sm:text-5xl font-bold animate-pulse mb-4 tracking-wider">
+          ⚠ ERROR ⚠
+        </div>
+        <p className="text-red-400 text-xs sm:text-sm font-semibold mb-6 uppercase tracking-widest leading-relaxed">
+          FATAL DIRECTORY OVERWRITE TRIGGERED:<br />
+          <span className="text-white bg-red-600 px-2 py-0.5 font-bold">sudo rm -rf /</span>
+        </p>
+        <div className="w-full h-1.5 bg-white/10 mb-6 overflow-hidden rounded">
+          <div className="h-full bg-red-500 transition-all duration-1000 ease-linear" style={{ width: `${(4 - countdown) * 25}%` }} />
+        </div>
+        <div className="text-[10px] text-red-500/70 mb-4 font-mono-code uppercase tracking-wider">
+          System kernel wiped. Executing emergency core recovery...
+        </div>
+        <div className="text-2xl sm:text-3xl text-white font-mono-code font-bold">
+          REBOOTING IN <span className="text-red-500">{countdown}s</span>
+        </div>
+      </div>
+    </div>
+  );
+}
