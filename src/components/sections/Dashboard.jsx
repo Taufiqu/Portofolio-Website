@@ -119,8 +119,8 @@ function Dashboard() {
         const res = await fetch(url);
         if (res.ok) {
           const data = await res.json();
-          // Add a base offset of 1420 so it feels established and matches the design theme
-          const total = 1420 + (data.count || 0);
+          // Show raw count directly from API (without 1420 offset)
+          const total = data.count || 0;
           setTotalVisits(total);
           
           // Back up the latest count to localStorage as fallback
@@ -137,10 +137,10 @@ function Dashboard() {
           const storageKey = 'taufiqu_visits';
           const sessionKey = 'taufiqu_session_visited';
           
-          // Try to restore from backup first, otherwise default to 1428
+          // Try to restore from backup first, otherwise default to 1
           let currentVisits = parseInt(localStorage.getItem('taufiqu_visits_backup') || localStorage.getItem(storageKey), 10);
           if (isNaN(currentVisits)) {
-            currentVisits = 1428;
+            currentVisits = 1;
           }
           
           if (!sessionStorage.getItem(sessionKey)) {
@@ -150,7 +150,7 @@ function Dashboard() {
           }
           setTotalVisits(currentVisits);
         } catch (e) {
-          setTotalVisits(1428);
+          setTotalVisits(1);
         }
       }
     };
