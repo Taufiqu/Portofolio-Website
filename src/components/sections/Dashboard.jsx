@@ -17,7 +17,10 @@ import {
   FaSpotify,
   FaMicrochip,
   FaEye,
-  FaUsers
+  FaUsers,
+  FaSearch,
+  FaTimes,
+  FaStepForward
 } from 'react-icons/fa';
 import { 
   SiReact, 
@@ -64,6 +67,12 @@ function Dashboard() {
   });
   const audioRef = useRef(null);
   const rafRef = useRef(null);
+
+  // Music Search States
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const [musicSearchQuery, setMusicSearchQuery] = useState('');
+  const [musicSearchResults, setMusicSearchResults] = useState([]);
+  const [isMusicSearching, setIsMusicSearching] = useState(false);
 
   // Copy Email State
   const [showCopyToast, setShowCopyToast] = useState(false);
@@ -312,6 +321,86 @@ function Dashboard() {
   }, [cliLogs]);
 
   // Spotify Audio Actions
+  const playSongWithTrack = (track) => {
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    }
+
+    setIsPlaying(false);
+    setSongProgress(0);
+
+    setSongInfo({
+      title: track.trackName,
+      artist: track.artistName,
+      cover: track.artworkUrl100 ? track.artworkUrl100.replace('100x100bb', '300x300bb') : 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&auto=format&fit=crop',
+      audioUrl: track.previewUrl
+    });
+
+    if (audio && track.previewUrl) {
+      audio.src = track.previewUrl;
+      audio.load();
+      audio.volume = 0.4;
+      audio.play()
+        .then(() => {
+          setIsPlaying(true);
+          rafRef.current = requestAnimationFrame(updateProgress);
+        })
+        .catch(err => console.log('Playback failed:', err));
+    }
+  };
+
+  const handleNextSong = async () => {
+    try {
+      const { PLAYLIST_DATA } = await import('../../data/playlist');
+      const filteredPlaylist = PLAYLIST_DATA.filter(
+        item => item.title.toLowerCase() !== songInfo.title.toLowerCase()
+      );
+      const playlistToUse = filteredPlaylist.length > 0 ? filteredPlaylist : PLAYLIST_DATA;
+      const randomItem = playlistToUse[Math.floor(Math.random() * playlistToUse.length)];
+      const searchTerm = `${randomItem.title} ${randomItem.artist}`;
+      
+      const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(searchTerm)}&limit=1&media=music`);
+      const data = await res.json();
+      
+      if (data.results && data.results.length > 0) {
+        const track = data.results[0];
+        playSongWithTrack(track);
+      }
+    } catch (err) {
+      console.error('Failed to skip to next song:', err);
+    }
+  };
+
+  const handleMusicSearch = async (e) => {
+    if (e) e.preventDefault();
+    if (!musicSearchQuery.trim()) return;
+
+    setIsMusicSearching(true);
+    try {
+      const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(musicSearchQuery)}&limit=5&media=music`);
+      const data = await res.json();
+      if (data.results) {
+        setMusicSearchResults(data.results);
+      } else {
+        setMusicSearchResults([]);
+      }
+    } catch (err) {
+      console.error('iTunes music search failed:', err);
+      setMusicSearchResults([]);
+    } finally {
+      setIsMusicSearching(false);
+    }
+  };
+
+  const handleSelectSearchResult = (track) => {
+    playSongWithTrack(track);
+    setIsSearchActive(false);
+    setMusicSearchQuery('');
+    setMusicSearchResults([]);
+  };
+
   const handlePlaySnippet = () => {
     const audio = audioRef.current;
     if (!audio || !songInfo.audioUrl) return;
@@ -505,44 +594,117 @@ function Dashboard() {
              ==================================================== */}
 
           {/* Card 3: Spotify Player - Spans 4 cols */}
-          <div className="bento-card p-6 md:col-span-4 flex flex-col justify-between gap-5 min-h-[220px]">
-            <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-[var(--color-text-muted)] font-mono-code">
-              <FaSpotify className="text-[#1DB954] animate-spin" style={{ animationDuration: '6s' }} />
-              <span>Coding Soundtrack</span>
+          <div className="bento-card p-6 md:col-span-4 flex flex-col justify-between gap-4 min-h-[220px]">
+            <div className="flex items-center justify-between text-xs uppercase tracking-wider text-[var(--color-text-muted)] font-mono-code">
+              <div className="flex items-center gap-2">
+                <FaSpotify className="text-[#1DB954] animate-spin" style={{ animationDuration: '6s' }} />
+                <span>Coding Soundtrack</span>
+              </div>
+              <button 
+                onClick={() => {
+                  setIsSearchActive(!isSearchActive);
+                  setMusicSearchQuery('');
+                  setMusicSearchResults([]);
+                }} 
+                className="text-[var(--color-text-muted)] hover:text-white transition p-1"
+                title={isSearchActive ? "Back to Player" : "Search Library"}
+              >
+                {isSearchActive ? <FaTimes className="text-xs" /> : <FaSearch className="text-xs" />}
+              </button>
             </div>
 
-            <div className="flex items-center gap-4">
-              <div 
-                className="relative group cursor-pointer h-14 w-14 shrink-0 rounded-xl overflow-hidden border border-white/10"
-                onClick={handlePlaySnippet}
-              >
-                {songInfo.cover && (
-                  <img 
-                    src={songInfo.cover} 
-                    alt="Album cover" 
-                    className={`h-full w-full object-cover transition-opacity duration-300 ${isPlaying ? 'opacity-60' : 'group-hover:opacity-60'}`}
+            {isSearchActive ? (
+              <div className="flex flex-col gap-2 flex-grow justify-between">
+                <form onSubmit={handleMusicSearch} className="flex gap-1">
+                  <input
+                    type="text"
+                    value={musicSearchQuery}
+                    onChange={(e) => setMusicSearchQuery(e.target.value)}
+                    placeholder="Search song / artist..."
+                    className="flex-grow bg-black/30 border border-white/10 rounded-lg px-2 py-1.5 font-mono-code text-[11px] text-white placeholder-white/20 outline-none focus:border-[var(--color-primary)]"
+                    autoFocus
                   />
-                )}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className={`flex h-8 w-8 items-center justify-center rounded-full bg-black/60 border border-white/20 backdrop-blur-sm transition-all duration-300 ${isPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
-                    {isPlaying ? <FaPause className="text-white text-xs" /> : <FaPlay className="text-white text-xs ml-0.5" />}
+                  <button
+                    type="submit"
+                    className="bg-[#1DB954]/10 text-[#1DB954] border border-[#1DB954]/20 px-2 rounded-lg text-[10px] font-mono-code font-bold hover:bg-[#1DB954] hover:text-[#0B0F17] transition"
+                  >
+                    FIND
+                  </button>
+                </form>
+
+                <div className="overflow-y-auto max-h-[100px] flex flex-col gap-1.5 pr-0.5 scrollbar-thin">
+                  {isMusicSearching ? (
+                    <p className="text-[9px] font-mono-code text-[var(--color-text-muted)] text-center py-2">SEARCHING LIBRARY...</p>
+                  ) : musicSearchResults.length > 0 ? (
+                    musicSearchResults.map((track) => (
+                      <div
+                        key={track.trackId}
+                        onClick={() => handleSelectSearchResult(track)}
+                        className="flex items-center gap-2 p-1 rounded bg-white/5 hover:bg-white/10 cursor-pointer transition border border-white/5 min-w-0"
+                      >
+                        {track.artworkUrl30 && (
+                          <img
+                            src={track.artworkUrl30}
+                            alt=""
+                            className="h-6 w-6 rounded object-cover shrink-0"
+                          />
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] font-semibold text-white truncate">{track.trackName}</p>
+                          <p className="text-[9px] text-[var(--color-text-muted)] truncate">{track.artistName}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : musicSearchQuery ? (
+                    <p className="text-[9px] font-mono-code text-red-400 text-center py-2">NO TRACKS FOUND.</p>
+                  ) : (
+                    <p className="text-[9px] font-mono-code text-[var(--color-text-muted)] text-center py-2">SEARCH 70M+ SONGS ON ITUNES</p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-4 flex-grow my-auto">
+                <div 
+                  className="relative group cursor-pointer h-14 w-14 shrink-0 rounded-xl overflow-hidden border border-white/10"
+                  onClick={handlePlaySnippet}
+                >
+                  {songInfo.cover && (
+                    <img 
+                      src={songInfo.cover} 
+                      alt="Album cover" 
+                      className={`h-full w-full object-cover transition-opacity duration-300 ${isPlaying ? 'opacity-60' : 'group-hover:opacity-60'}`}
+                    />
+                  )}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className={`flex h-8 w-8 items-center justify-center rounded-full bg-black/60 border border-white/20 backdrop-blur-sm transition-all duration-300 ${isPlaying ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                      {isPlaying ? <FaPause className="text-white text-xs" /> : <FaPlay className="text-white text-xs ml-0.5" />}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-sm font-semibold truncate text-white">{songInfo.title}</p>
+                    <button 
+                      onClick={handleNextSong} 
+                      className="text-[var(--color-text-muted)] hover:text-white hover:scale-110 transition p-1 shrink-0"
+                      title="Next Song"
+                    >
+                      <FaStepForward className="text-[10px]" />
+                    </button>
+                  </div>
+                  <p className="text-xs truncate text-[var(--color-text-muted)] mb-2">{songInfo.artist}</p>
+                  
+                  {/* Custom Audio Progress bar */}
+                  <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-[#1DB954] rounded-full transition-all duration-100" 
+                      style={{ width: `${songProgress}%` }}
+                    />
                   </div>
                 </div>
               </div>
-
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate text-white">{songInfo.title}</p>
-                <p className="text-xs truncate text-[var(--color-text-muted)] mb-2">{songInfo.artist}</p>
-                
-                {/* Custom Audio Progress bar */}
-                <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-[#1DB954] rounded-full transition-all duration-100" 
-                    style={{ width: `${songProgress}%` }}
-                  />
-                </div>
-              </div>
-            </div>
+            )}
 
             <div className="text-[9px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] border-t border-white/5 pt-3">
               Source: iTunes API // YTM Playlist
