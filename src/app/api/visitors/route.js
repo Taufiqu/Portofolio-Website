@@ -1,32 +1,51 @@
 import { NextResponse } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request) {
-  const { searchParams } = new URL(request.url);
-  const action = searchParams.get('action'); // 'up' or 'get'
+export async function GET() {
+  const cookieStore = await cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options))
+          } catch {}
+        },
+      },
+    }
+  );
 
   try {
-    let url = 'https://api.counterapi.dev/v1/taufiqu/portfolio';
-    if (action === 'up') {
-      url = 'https://api.counterapi.dev/v1/taufiqu/portfolio/up';
-    }
+    // 1. Get total visits count
+    const { count: totalCount, error: totalError } = await supabase
+      .from('visits')
+      .select('*', { count: 'exact', head: true });
 
-    const res = await fetch(url, { 
-      cache: 'no-store',
-      headers: {
-        'Accept': 'application/json'
-      }
+    if (totalError) throw totalError;
+
+    // 2. Get live visits count (active in the last 40 seconds)
+    const thresholdTime = new Date(Date.now() - 40 * 1000).toISOString();
+    const { count: liveCount, error: liveError } = await supabase
+      .from('visits')
+      .select('*', { count: 'exact', head: true })
+      .gt('last_seen', thresholdTime);
+
+    if (liveError) throw liveError;
+
+    return NextResponse.json({
+      total: totalCount || 0,
+      live: Math.max(1, liveCount || 0) // Minimum 1 since the current client is active
     });
-
-    if (!res.ok) {
-      throw new Error(`CounterAPI responded with status: ${res.status}`);
-    }
-
-    const data = await res.json();
-    return NextResponse.json({ count: data.count || 0 });
   } catch (error) {
-    console.error('API proxy error:', error);
-    return NextResponse.json({ error: error.message, count: 0 }, { status: 500 });
+    console.error('Supabase query error:', error);
+    return NextResponse.json({ error: error.message, total: 1, live: 1 }, { status: 500 });
   }
 }

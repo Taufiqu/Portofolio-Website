@@ -85,85 +85,90 @@ function Dashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  // Live Visitors and Network Traffic Simulation
+  // Real-time Supabase Visitor Tracking & Heartbeat
   useEffect(() => {
-    // Initial load simulation (realistic range 1 to 2)
-    setLiveVisitors(Math.random() > 0.5 ? 1 : 2);
+    // Generate or retrieve session ID (persists across reloads on the same browser)
+    let sessionId = '';
+    try {
+      sessionId = localStorage.getItem('taufiqu_session_id');
+      if (!sessionId) {
+        sessionId = 'sess_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+        localStorage.setItem('taufiqu_session_id', sessionId);
+      }
+    } catch (e) {
+      sessionId = 'sess_temp_' + Math.random().toString(36).substring(2, 15);
+    }
 
+    // Clean up old dummy storage keys if present
+    try {
+      localStorage.removeItem('taufiqu_visits');
+      localStorage.removeItem('taufiqu_visits_backup');
+    } catch (e) {}
+
+    // Heartbeat logic
+    const sendHeartbeat = async () => {
+      try {
+        await fetch('/api/heartbeat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId })
+        });
+      } catch (err) {
+        console.warn('Heartbeat send failed:', err);
+      }
+    };
+
+    // Telemetry fetcher logic
+    const fetchTelemetry = async () => {
+      try {
+        const res = await fetch('/api/visitors');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.total !== undefined) {
+            setTotalVisits(data.total);
+            try {
+              localStorage.setItem('taufiqu_real_visits_backup', data.total.toString());
+            } catch (e) {}
+          }
+          if (data.live !== undefined) {
+            setLiveVisitors(data.live);
+          }
+        }
+      } catch (err) {
+        console.warn('Telemetry fetch failed, using fallback:', err);
+        try {
+          const backup = parseInt(localStorage.getItem('taufiqu_real_visits_backup'), 10);
+          if (!isNaN(backup)) setTotalVisits(backup);
+        } catch (e) {}
+      }
+    };
+
+    // Execute immediately
+    sendHeartbeat().then(() => {
+      fetchTelemetry();
+    });
+
+    // Intervals
+    const heartbeatInterval = setInterval(sendHeartbeat, 25000); // Heartbeat every 25s
+    const telemetryInterval = setInterval(fetchTelemetry, 30000); // Refresh counts every 30s
+
+    return () => {
+      clearInterval(heartbeatInterval);
+      clearInterval(telemetryInterval);
+    };
+  }, []);
+
+  // Network Traffic Simulation
+  useEffect(() => {
     const interval = setInterval(() => {
-      // Simulate live visitors fluctuating between 1 and 2 (extremely realistic)
-      setLiveVisitors(prev => {
-        const next = Math.random() > 0.5 ? 1 : 2;
-        return next;
-      });
       // Simulate network traffic fluctuating between 2.1 and 18.5 KB/s
       setDataTransfer(parseFloat((Math.random() * 16 + 2.5).toFixed(1)));
     }, 8000);
     return () => clearInterval(interval);
   }, []);
 
-  // Initialize Total Visits and Client Device Info
+  // Initialize Client Device Info
   useEffect(() => {
-    // 1. Real-time Total Visits via CounterAPI
-    const fetchTotalVisits = async () => {
-      // Clear the old dummy keys to fix local state immediately
-      try {
-        localStorage.removeItem('taufiqu_visits');
-        localStorage.removeItem('taufiqu_visits_backup');
-      } catch (e) {}
-
-      try {
-        const sessionKey = 'taufiqu_session_visited';
-        const isNewSession = !sessionStorage.getItem(sessionKey);
-        
-        let url = '/api/visitors?action=get';
-        if (isNewSession) {
-          url = '/api/visitors?action=up';
-          sessionStorage.setItem(sessionKey, 'true');
-        }
-        
-        const res = await fetch(url);
-        if (res.ok) {
-          const data = await res.json();
-          // Show raw count directly from API
-          const total = data.count || 0;
-          setTotalVisits(total);
-          
-          // Back up the latest count to a clean localStorage key
-          try {
-            localStorage.setItem('taufiqu_real_visits_backup', total.toString());
-          } catch (e) {}
-        } else {
-          throw new Error('API response not OK');
-        }
-      } catch (err) {
-        console.warn('CounterAPI fetch failed, falling back to local simulation:', err);
-        // Fallback to clean localStorage simulation starting from 1 (NO MORE DUMMY)
-        try {
-          const storageKey = 'taufiqu_real_visits';
-          const sessionKey = 'taufiqu_session_visited';
-          
-          // Restore from clean backup, otherwise default to 1
-          let currentVisits = parseInt(localStorage.getItem('taufiqu_real_visits_backup') || localStorage.getItem(storageKey), 10);
-          if (isNaN(currentVisits)) {
-            currentVisits = 1;
-          }
-          
-          if (!sessionStorage.getItem(sessionKey)) {
-            currentVisits += 1;
-            localStorage.setItem(storageKey, currentVisits.toString());
-            sessionStorage.setItem(sessionKey, 'true');
-          }
-          setTotalVisits(currentVisits);
-        } catch (e) {
-          setTotalVisits(1);
-        }
-      }
-    };
-
-    fetchTotalVisits();
-
-    // 2. Client Node Detection (OS & Browser)
     if (typeof window !== 'undefined' && window.navigator) {
       const ua = window.navigator.userAgent;
       let os = 'Unknown OS';
