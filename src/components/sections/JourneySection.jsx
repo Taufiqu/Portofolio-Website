@@ -1,13 +1,87 @@
 "use client";
 
-import React from 'react';
-import { JOURNEY_DATA } from '../../data/journey';
-import { FaGitBranch, FaCode, FaCalendarAlt, FaUser } from 'react-icons/fa';
+import React, { useState, useRef } from 'react';
+import { 
+  FaFolder, 
+  FaFolderOpen, 
+  FaChevronDown, 
+  FaChevronRight, 
+  FaTimes,
+  FaFileCode,
+  FaTerminal
+} from 'react-icons/fa';
+import { GoGitBranch } from 'react-icons/go';
+
+const FILES_DATA = {
+  "software_engineer.json": {
+    "milestone": "Software Engineer",
+    "period": "2025 - Present",
+    "type": "work",
+    "description": "Fokus mengembangkan skill fullstack, berkontribusi di open source, dan membangun produk digital yang scalable.",
+    "skills_unlocked": ["React", "Next.js", "System Design"],
+    "active": true
+  },
+  "web_development.json": {
+    "milestone": "Deep Dive Web Development",
+    "period": "2024",
+    "type": "education",
+    "description": "Mulai serius mendalami ekosistem JavaScript modern, dari frontend hingga backend integration.",
+    "skills_unlocked": ["JavaScript", "HTML/CSS", "Git"],
+    "completed": true
+  },
+  "first_steps.json": {
+    "milestone": "First Steps in Programming",
+    "period": "2022 - 2023",
+    "type": "achievement",
+    "description": "Mengenal dunia algoritma dan struktur data. Mempelajari logika dasar pemrograman.",
+    "skills_unlocked": ["C++", "Logic", "Algorithms"],
+    "grade": "A+"
+  }
+};
 
 function JourneySection() {
-  // Hardcoded commit hashes to make it feel like real git log history
-  const commitHashes = ["9d8f3a1", "4b7e2c9", "1a2b3c4"];
-  const branches = ["main", "feature/edu", "main"];
+  const [activeFile, setActiveFile] = useState("software_engineer.json");
+  const [isFolderOpen, setIsFolderOpen] = useState(true);
+  const editorRef = useRef(null);
+
+  // High-fidelity JSON parser highlighting regex
+  const highlightJsonLine = (line) => {
+    let html = line;
+    // Escape HTML
+    html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    // Strings in orange
+    html = html.replace(/"([^"]*)"/g, '<span style="color: #ce9178">"$1"</span>');
+    // Keys in cyan/blue (overwrite keys that were colored orange)
+    html = html.replace(/<span style="color: #ce9178">"([^"]+)"<\/span>(\s*:)/g, '<span style="color: #9cdcfe">"$1"</span>$2');
+    // Booleans/numbers in yellow/green
+    html = html.replace(/\b(true|false|\d+)\b/g, '<span style="color: #b5cea8">$1</span>');
+    return html;
+  };
+
+  const renderJsonEditor = (fileName) => {
+    const data = FILES_DATA[fileName];
+    const jsonString = JSON.stringify(data, null, 2);
+    const lines = jsonString.split('\n');
+
+    return (
+      <div className="py-4 overflow-x-auto text-[11px] font-mono-code leading-relaxed bg-[#0B0F17]/90 min-h-[220px]">
+        {lines.map((line, idx) => {
+          const highlightedHtml = highlightJsonLine(line);
+          return (
+            <div key={idx} className="flex hover:bg-white/5 px-4 transition-colors duration-100 group">
+              <span className="w-8 text-right select-none text-white/20 pr-3 font-mono-code border-r border-white/5 group-hover:text-white/40">
+                {idx + 1}
+              </span>
+              <span 
+                className="pl-4 font-mono-code"
+                dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+              />
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <section 
@@ -16,7 +90,7 @@ function JourneySection() {
     >
       <div className="max-w-4xl mx-auto">
         {/* Section Header */}
-        <div className="mb-20 text-center md:text-left">
+        <div className="mb-14 text-center md:text-left">
           <p className="font-mono-code text-xs text-[var(--color-accent-green)] uppercase tracking-[0.2em] mb-2">
             [ 03. System History Logs ]
           </p>
@@ -26,117 +100,111 @@ function JourneySection() {
           <div className="h-1 w-16 bg-[var(--color-accent-green)] mt-4 mx-auto md:mx-0" />
         </div>
 
-        {/* Git Graph Timeline */}
-        <div className="space-y-0">
-          {JOURNEY_DATA.map((item, idx) => {
-            const hash = commitHashes[idx] || "abcdef0";
-            const branch = branches[idx] || "main";
-            const isLatest = idx === 0;
+        {/* IDE Simulator Container */}
+        <div className="w-full rounded-xl overflow-hidden border border-white/10 bg-[#0d1117] shadow-2xl flex flex-col font-mono-code">
+          
+          {/* 1. IDE Top Title Bar */}
+          <div className="bg-[#161b22] px-4 py-2 flex items-center justify-between border-b border-white/5 select-none text-[11px] text-[var(--color-text-muted)]">
+            {/* Red / Yellow / Green Window dots */}
+            <div className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+              <span className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+              <span className="w-3 h-3 rounded-full bg-[#27c93f]" />
+            </div>
+            
+            {/* Title path */}
+            <span className="truncate max-w-[280px] md:max-w-none text-white/55">
+              taufiqu-journey - VS Code // src/data/{activeFile}
+            </span>
+            
+            <div className="w-12" /> {/* Spacer */}
+          </div>
 
-            // Generate Inline SVG dynamically based on timeline index to draw the Git Tree Graph
-            let gitGraphSvg;
-            if (idx === 0) {
-              // Row 1 (Work): Main branch node. Green branch does not exist yet.
-              gitGraphSvg = (
-                <svg className="w-20 h-full min-h-[180px]" viewBox="0 0 80 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Main Line running all the way down */}
-                  <line x1="25" y1="0" x2="25" y2="180" stroke="#00F2FE" strokeWidth="3" />
-                  {/* Commit Node on main */}
-                  <circle cx="25" cy="45" r="8" fill="#00F2FE" className="animate-pulse" />
-                  <circle cx="25" cy="45" r="4" fill="#0B0F17" />
-                </svg>
-              );
-            } else if (idx === 1) {
-              // Row 2 (Education): main branch line goes straight. education branch splits off and has a node.
-              gitGraphSvg = (
-                <svg className="w-20 h-full min-h-[180px]" viewBox="0 0 80 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Main Line goes straight down */}
-                  <line x1="25" y1="0" x2="25" y2="180" stroke="#00F2FE" strokeWidth="3" />
-                  {/* Edu branch curves off main and runs down */}
-                  <path d="M 25,10 Q 25,45 55,45 T 55,180" fill="none" stroke="#10B981" strokeWidth="2.5" strokeDasharray="5,5" />
-                  {/* Commit Node on edu branch */}
-                  <circle cx="55" cy="90" r="8" fill="#10B981" />
-                  <circle cx="55" cy="90" r="4" fill="#0B0F17" />
-                </svg>
-              );
-            } else {
-              // Row 3 (First steps): edu branch merges back into main. main has its initial node and stops.
-              gitGraphSvg = (
-                <svg className="w-20 h-full min-h-[180px]" viewBox="0 0 80 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Main Line goes down and stops at commit */}
-                  <line x1="25" y1="0" x2="25" y2="70" stroke="#00F2FE" strokeWidth="3" />
-                  {/* Edu branch merges back into main */}
-                  <path d="M 55,0 Q 55,30 25,70" fill="none" stroke="#10B981" strokeWidth="2.5" strokeDasharray="5,5" />
-                  {/* Initial Commit Node on main */}
-                  <circle cx="25" cy="70" r="8" fill="#00F2FE" />
-                  <circle cx="25" cy="70" r="4" fill="#0B0F17" />
-                </svg>
-              );
-            }
+          {/* 2. IDE Columns Layout */}
+          <div className="grid grid-cols-12 items-stretch min-h-[300px]">
+            
+            {/* LEFT PANEL: FILE EXPLORER (Hidden on mobile to save space) */}
+            <div className="hidden md:block md:col-span-4 bg-[#0d1117] border-r border-white/5 p-4 select-none text-xs text-white/70">
+              <p className="text-[10px] uppercase font-bold tracking-wider text-white/30 mb-4">
+                Explorer: src
+              </p>
 
-            return (
-              <div key={item.id} className="flex items-stretch group">
-                {/* Left side: SVG Git graph column */}
-                <div className="flex-shrink-0 flex justify-center">
-                  {gitGraphSvg}
+              {/* Folder Node */}
+              <div className="space-y-1">
+                <div 
+                  onClick={() => setIsFolderOpen(!isFolderOpen)}
+                  className="flex items-center gap-2 hover:text-white cursor-pointer py-1 transition-colors"
+                >
+                  {isFolderOpen ? <FaChevronDown className="text-[9px]" /> : <FaChevronRight className="text-[9px]" />}
+                  {isFolderOpen ? <FaFolderOpen className="text-amber-500 text-xs" /> : <FaFolder className="text-amber-500 text-xs" />}
+                  <span className="font-semibold text-white/90">journey</span>
                 </div>
 
-                {/* Right side: Commit Terminal Log info */}
-                <div className="flex-1 pb-16 pl-2 pr-4 font-mono-code text-xs">
-                  <div className="space-y-3 pt-2">
-                    
-                    {/* Commit Hash Header */}
-                    <div className="text-[11px] text-[var(--color-text-muted)] space-y-1">
-                      <p className="text-white font-semibold">
-                        <span className="text-amber-500">commit {hash}</span>
-                        {isLatest && (
-                          <span className="text-[var(--color-primary)] font-bold ml-2">
-                            (HEAD {"->"} {branch}, origin/{branch})
-                          </span>
-                        )}
-                        {!isLatest && (
-                          <span className="text-[var(--color-text-muted)] font-normal ml-2">
-                            ({branch})
-                          </span>
-                        )}
-                      </p>
-                      <div className="flex items-center gap-1.5 mt-1 text-[10px]">
-                        <FaUser className="text-[10px]" />
-                        <span>Author: Taufiqu &lt;taufiqu.dev@gmail.com&gt;</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-[10px]">
-                        <FaCalendarAlt className="text-[10px]" />
-                        <span>Date:   {item.year}</span>
-                      </div>
-                    </div>
-
-                    {/* Commit Message (Title) */}
-                    <div className="space-y-1.5">
-                      <h4 className="text-base font-bold text-white tracking-wide group-hover:text-[var(--color-primary)] transition-colors">
-                        [{item.type.toUpperCase()}] - {item.title}
-                      </h4>
-                      <p className="text-[var(--color-text-muted)] leading-relaxed text-xs pl-4 border-l-2 border-slate-800">
-                        {item.description}
-                      </p>
-                    </div>
-
-                    {/* Tech Chips */}
-                    <div className="flex flex-wrap gap-1.5 pt-2 pl-4">
-                      {item.skills.map(s => (
-                        <span 
-                          key={s} 
-                          className="bg-white/5 border border-white/10 rounded px-2.5 py-0.5 text-[10px] text-slate-400 uppercase font-medium hover:border-[var(--color-primary)] hover:text-white transition duration-200"
+                {/* File Nodes inside folder */}
+                {isFolderOpen && (
+                  <div className="pl-6 space-y-1 border-l border-white/5 ml-2.5">
+                    {Object.keys(FILES_DATA).map((fileName) => {
+                      const isActive = activeFile === fileName;
+                      return (
+                        <div 
+                          key={fileName}
+                          onClick={() => setActiveFile(fileName)}
+                          className={`flex items-center gap-2 hover:bg-white/5 hover:text-white cursor-pointer px-2 py-1 rounded transition-all duration-100 ${isActive ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] font-bold border-l-2 border-[var(--color-primary)]' : ''}`}
                         >
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-
+                          <FaFileCode className={`text-xs ${isActive ? 'text-[var(--color-primary)]' : 'text-slate-400'}`} />
+                          <span>{fileName}</span>
+                        </div>
+                      );
+                    })}
                   </div>
-                </div>
+                )}
               </div>
-            );
-          })}
+            </div>
+
+            {/* RIGHT PANEL: EDITOR VIEW */}
+            <div className="col-span-12 md:col-span-8 bg-[#090d16]/95 flex flex-col justify-between">
+              
+              {/* File Tabs Row */}
+              <div className="flex bg-[#0d1117] border-b border-white/5 text-[10px] overflow-x-auto select-none">
+                {Object.keys(FILES_DATA).map((fileName) => {
+                  const isActive = activeFile === fileName;
+                  return (
+                    <div
+                      key={fileName}
+                      onClick={() => setActiveFile(fileName)}
+                      className={`flex items-center gap-2 px-4 py-2 border-r border-white/5 cursor-pointer transition-all duration-100 ${isActive ? 'bg-[#090d16] text-[var(--color-primary)] border-t-2 border-t-[var(--color-primary)] font-bold' : 'text-white/40 hover:bg-white/5 hover:text-white/70'}`}
+                    >
+                      <FaFileCode className={`text-[10px] ${isActive ? 'text-[var(--color-primary)]' : 'text-slate-500'}`} />
+                      <span>{fileName}</span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Code Editor body */}
+              <div ref={editorRef} className="flex-grow">
+                {renderJsonEditor(activeFile)}
+              </div>
+
+            </div>
+          </div>
+
+          {/* 3. IDE Bottom Status Bar */}
+          <div className="bg-[#161b22] px-4 py-1.5 flex items-center justify-between border-t border-white/5 text-[10px] text-white/50 select-none">
+            {/* Left side: Branch indicator */}
+            <div className="flex items-center gap-1 hover:text-white cursor-pointer transition-colors">
+              <GoGitBranch className="text-xs" />
+              <span>master*</span>
+            </div>
+            
+            {/* Right side: Editor stats */}
+            <div className="flex items-center gap-4">
+              <span>Ln 1, Col 1</span>
+              <span>UTF-8</span>
+              <span className="text-[var(--color-primary)] font-bold">JSON</span>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>
