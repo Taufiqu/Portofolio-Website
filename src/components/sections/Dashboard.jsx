@@ -78,7 +78,7 @@ function Dashboard() {
   // Copy Email State
   const [showCopyToast, setShowCopyToast] = useState(false);
 
-  const cliEndRef = useRef(null);
+  const logsContainerRef = useRef(null);
   const isInitialMount = useRef(true);
   const startTimeRef = useRef(Date.now());
 
@@ -316,8 +316,8 @@ function Dashboard() {
       isInitialMount.current = false;
       return;
     }
-    if (cliEndRef.current) {
-      cliEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (logsContainerRef.current) {
+      logsContainerRef.current.scrollTop = logsContainerRef.current.scrollHeight;
     }
   }, [cliLogs]);
 
@@ -485,7 +485,7 @@ function Dashboard() {
               </div>
 
               {/* Console logs box */}
-              <div className="rounded-xl bg-black/60 p-4 border border-white/5 font-mono-code text-[11px] h-48 overflow-y-auto mb-4 flex flex-col gap-1.5 scrollbar-thin">
+              <div ref={logsContainerRef} className="rounded-xl bg-black/60 p-4 border border-white/5 font-mono-code text-[11px] h-48 overflow-y-auto mb-4 flex flex-col gap-1.5 scrollbar-thin">
                 {cliLogs.map((log, idx) => (
                   <div key={idx} className="leading-relaxed">
                     {log.type === 'input' && <span className="text-white font-bold">{log.text}</span>}
@@ -494,7 +494,6 @@ function Dashboard() {
                     {log.type === 'err' && <span className="text-red-400">{log.text}</span>}
                   </div>
                 ))}
-                <div ref={cliEndRef} />
               </div>
 
               {/* Console Form Input */}
