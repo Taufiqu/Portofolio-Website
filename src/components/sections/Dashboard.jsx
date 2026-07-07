@@ -106,6 +106,12 @@ function Dashboard() {
   useEffect(() => {
     // 1. Real-time Total Visits via CounterAPI
     const fetchTotalVisits = async () => {
+      // Clear the old dummy keys to fix local state immediately
+      try {
+        localStorage.removeItem('taufiqu_visits');
+        localStorage.removeItem('taufiqu_visits_backup');
+      } catch (e) {}
+
       try {
         const sessionKey = 'taufiqu_session_visited';
         const isNewSession = !sessionStorage.getItem(sessionKey);
@@ -119,26 +125,26 @@ function Dashboard() {
         const res = await fetch(url);
         if (res.ok) {
           const data = await res.json();
-          // Show raw count directly from API (without 1420 offset)
+          // Show raw count directly from API
           const total = data.count || 0;
           setTotalVisits(total);
           
-          // Back up the latest count to localStorage as fallback
+          // Back up the latest count to a clean localStorage key
           try {
-            localStorage.setItem('taufiqu_visits_backup', total.toString());
+            localStorage.setItem('taufiqu_real_visits_backup', total.toString());
           } catch (e) {}
         } else {
           throw new Error('API response not OK');
         }
       } catch (err) {
         console.warn('CounterAPI fetch failed, falling back to local simulation:', err);
-        // Fallback to localStorage simulation if CounterAPI is blocked/down
+        // Fallback to clean localStorage simulation starting from 1 (NO MORE DUMMY)
         try {
-          const storageKey = 'taufiqu_visits';
+          const storageKey = 'taufiqu_real_visits';
           const sessionKey = 'taufiqu_session_visited';
           
-          // Try to restore from backup first, otherwise default to 1
-          let currentVisits = parseInt(localStorage.getItem('taufiqu_visits_backup') || localStorage.getItem(storageKey), 10);
+          // Restore from clean backup, otherwise default to 1
+          let currentVisits = parseInt(localStorage.getItem('taufiqu_real_visits_backup') || localStorage.getItem(storageKey), 10);
           if (isNaN(currentVisits)) {
             currentVisits = 1;
           }
