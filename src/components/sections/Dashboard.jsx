@@ -75,6 +75,9 @@ function Dashboard() {
   const [isMusicSearching, setIsMusicSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
+  // GitHub Widget Tab State
+  const [githubTab, setGithubTab] = useState('stats');
+
   // Copy Email State
   const [showCopyToast, setShowCopyToast] = useState(false);
 
@@ -716,20 +719,60 @@ function Dashboard() {
             <audio ref={audioRef} src={songInfo.audioUrl || ''} preload="auto" />
           </div>
 
-          {/* Card 4: GitHub Stats Streaks - Spans 4 cols */}
+          {/* Card 4: GitHub Stats Dashboard - Spans 4 cols */}
           <div className="bento-card p-4 md:col-span-4 flex flex-col justify-between min-h-[220px]">
-            <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-[var(--color-text-muted)] font-mono-code mb-2">
-              <FaGithub className="text-[var(--color-primary)]" />
-              <span>GitHub streak stats</span>
+            <div className="flex items-center justify-between gap-2 text-xs uppercase tracking-wider text-[var(--color-text-muted)] font-mono-code mb-2 w-full">
+              <div className="flex items-center gap-1.5 shrink-0">
+                <FaGithub className="text-[var(--color-primary)]" />
+                <span className="hidden sm:inline">GitHub Logs</span>
+              </div>
+              <div className="flex gap-1 text-[8px] sm:text-[9px]">
+                <button 
+                  onClick={() => setGithubTab('stats')}
+                  className={`px-1.5 py-0.5 rounded border transition ${githubTab === 'stats' ? 'bg-[var(--color-primary)]/10 border-[var(--color-primary)]/30 text-[var(--color-primary)] font-bold' : 'border-transparent text-[var(--color-text-muted)] hover:text-white'}`}
+                >
+                  STATS
+                </button>
+                <button 
+                  onClick={() => setGithubTab('streak')}
+                  className={`px-1.5 py-0.5 rounded border transition ${githubTab === 'streak' ? 'bg-[var(--color-primary)]/10 border-[var(--color-primary)]/30 text-[var(--color-primary)] font-bold' : 'border-transparent text-[var(--color-text-muted)] hover:text-white'}`}
+                >
+                  STREAK
+                </button>
+                <button 
+                  onClick={() => setGithubTab('langs')}
+                  className={`px-1.5 py-0.5 rounded border transition ${githubTab === 'langs' ? 'bg-[var(--color-primary)]/10 border-[var(--color-primary)]/30 text-[var(--color-primary)] font-bold' : 'border-transparent text-[var(--color-text-muted)] hover:text-white'}`}
+                >
+                  LANGS
+                </button>
+              </div>
             </div>
 
-            <div className="flex items-center justify-center overflow-hidden rounded-lg bg-black/25 p-1 flex-grow">
-              <img 
-                src="https://github-readme-streak-stats.herokuapp.com/?user=Taufiqu&theme=transparent&hide_border=true&stroke=00FF7F&ring=00FF7F&fire=00FF7F&currStreakNum=E0E0E0&sideNums=E0E0E0&currStreakLabel=00FF7F&sideLabels=00FF7F&background=transparent"
-                alt="Github Activity Stats"
-                loading="lazy"
-                className="w-full max-h-24 object-contain"
-              />
+            <div className="flex items-center justify-center overflow-hidden rounded-lg bg-black/25 p-1 flex-grow min-h-[120px] transition-all duration-300">
+              {githubTab === 'stats' && (
+                <img 
+                  src="https://github-stats-extended.vercel.app/api?username=Taufiqu&show_icons=true&theme=transparent&hide_border=true&icon_color=00FF7F&title_color=00FF7F&text_color=E0E0E0&bg_color=00000000&count_private=true"
+                  alt="Github Account Stats"
+                  loading="lazy"
+                  className="w-full max-h-[140px] object-contain animate-fadeIn"
+                />
+              )}
+              {githubTab === 'streak' && (
+                <img 
+                  src="https://github-readme-streak-stats.herokuapp.com/?user=Taufiqu&theme=transparent&hide_border=true&stroke=00FF7F&ring=00FF7F&fire=00FF7F&currStreakNum=E0E0E0&sideNums=E0E0E0&currStreakLabel=00FF7F&sideLabels=00FF7F&background=transparent"
+                  alt="Github Contribution Streak"
+                  loading="lazy"
+                  className="w-full max-h-[110px] object-contain animate-fadeIn"
+                />
+              )}
+              {githubTab === 'langs' && (
+                <img 
+                  src="https://github-stats-extended.vercel.app/api/top-langs/?username=Taufiqu&layout=compact&theme=transparent&hide_border=true&icon_color=00FF7F&title_color=00FF7F&text_color=E0E0E0&bg_color=00000000&count_private=true"
+                  alt="Github Top Languages"
+                  loading="lazy"
+                  className="w-full max-h-[140px] object-contain animate-fadeIn"
+                />
+              )}
             </div>
 
             <div className="flex justify-between text-[9px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] border-t border-white/5 pt-3">
