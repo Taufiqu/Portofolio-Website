@@ -31,7 +31,7 @@ import { MdLocationOn, MdSchedule, MdDevices } from 'react-icons/md';
 
 const MY_EMAIL = "taufiqu.dev@gmail.com";
 
-function Dashboard({ initialTelemetry }) {
+function Dashboard() {
   // CLI States
   const [cliInput, setCliInput] = useState('');
   const [cliLogs, setCliLogs] = useState([
@@ -48,8 +48,8 @@ function Dashboard({ initialTelemetry }) {
   });
 
   // Visitor and Network Telemetry States
-  const [liveVisitors, setLiveVisitors] = useState(initialTelemetry?.live ?? 1);
-  const [totalVisits, setTotalVisits] = useState(initialTelemetry?.total ?? 0);
+  const [liveVisitors, setLiveVisitors] = useState(null);
+  const [totalVisits, setTotalVisits] = useState(null);
   const [dataTransfer, setDataTransfer] = useState(4.2);
   const [clientNode, setClientNode] = useState({ os: 'Loading...', browser: 'Detecting...' });
 
@@ -136,10 +136,17 @@ function Dashboard({ initialTelemetry }) {
         }
       } catch (err) {
         console.warn('Telemetry fetch failed, using fallback:', err);
+        setLiveVisitors(1);
         try {
           const backup = parseInt(localStorage.getItem('taufiqu_real_visits_backup'), 10);
-          if (!isNaN(backup)) setTotalVisits(backup);
-        } catch (e) {}
+          if (!isNaN(backup)) {
+            setTotalVisits(backup);
+          } else {
+            setTotalVisits(1);
+          }
+        } catch (e) {
+          setTotalVisits(1);
+        }
       }
     };
 
@@ -595,7 +602,7 @@ function Dashboard({ initialTelemetry }) {
                 <div className="min-w-0">
                   <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">LIVE_NODES</span>
                   <span className="text-white font-semibold block">
-                    {liveVisitors} <span className="text-[10px] text-[var(--color-accent-green)]">(Active)</span>
+                    {liveVisitors !== null ? liveVisitors : '---'} <span className="text-[10px] text-[var(--color-accent-green)]">(Active)</span>
                   </span>
                 </div>
               </div>
@@ -614,7 +621,9 @@ function Dashboard({ initialTelemetry }) {
                 <FaEye className="text-base text-[var(--color-primary)] mt-0.5 shrink-0" />
                 <div className="min-w-0">
                   <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">SYS_REQS</span>
-                  <span className="text-white font-semibold block">{totalVisits.toLocaleString()}</span>
+                  <span className="text-white font-semibold block">
+                    {totalVisits !== null ? totalVisits.toLocaleString() : '---'}
+                  </span>
                 </div>
               </div>
 
