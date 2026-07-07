@@ -76,13 +76,23 @@ function Hero() {
         </div>
 
         {/* CTA Button */}
-        <a 
-          href="#projects" 
-          onClick={handleScrollToProjects}
-          className="mt-8 group relative rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/5 px-8 py-3.5 font-mono-code text-xs font-bold uppercase tracking-widest text-[var(--color-primary)] transition hover:bg-[var(--color-primary)] hover:text-[#0B0F17] hover:shadow-[0_0_25px_rgba(0,242,254,0.3)] active:scale-95"
-        >
-          EXECUTE_SYS_EXPLORATION()
-        </a>
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a 
+            href="#projects" 
+            onClick={handleScrollToProjects}
+            className="group relative rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-primary)]/5 px-8 py-3.5 font-mono-code text-xs font-bold uppercase tracking-widest text-[var(--color-primary)] transition hover:bg-[var(--color-primary)] hover:text-[#0B0F17] hover:shadow-[0_0_25px_rgba(0,242,254,0.3)] active:scale-95 w-full sm:w-auto text-center"
+          >
+            EXECUTE_SYS_EXPLORATION()
+          </a>
+          <a 
+            href="/cv.html" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="group relative rounded-xl border border-white/20 bg-white/5 px-8 py-3.5 font-mono-code text-xs font-bold uppercase tracking-widest text-white transition hover:bg-white hover:text-[#0B0F17] hover:border-white hover:shadow-[0_0_25px_rgba(255,255,255,0.2)] active:scale-95 w-full sm:w-auto text-center"
+          >
+            VIEW_CURRICULUM_VITAE()
+          </a>
+        </div>
       </div>
 
       {/* Scroll Down mouse animation */}
