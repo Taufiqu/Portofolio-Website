@@ -48,7 +48,7 @@ function ContactSection() {
           <div className="flex flex-col justify-between">
             <div>
               <p className="font-mono-code text-xs text-[var(--color-primary)] uppercase tracking-[0.2em] mb-2">
-                [ 03. Open Port ]
+                [ 05. Open Port ]
               </p>
               <h2 className="font-sans text-3xl font-extrabold uppercase tracking-wide text-white mb-6">
                 Let's Connect

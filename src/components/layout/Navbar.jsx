@@ -17,6 +17,14 @@ function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Clear hash dari URL saat pertama load supaya refresh tidak auto-scroll
+  useEffect(() => {
+    if (window.location.hash) {
+      history.replaceState(null, '', window.location.pathname);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, []);
+
   const handleScrollTo = (e, id) => {
     e.preventDefault();
     const element = document.getElementById(id);
@@ -31,6 +39,9 @@ function Navbar() {
         top: offsetPosition,
         behavior: 'smooth'
       });
+
+      // Bersihkan hash dari URL supaya refresh tidak auto-scroll ke section
+      history.replaceState(null, '', window.location.pathname);
     }
   };
 
@@ -81,11 +92,20 @@ function Navbar() {
           </li>
           <li>
             <a 
+              href="#guestbook" 
+              onClick={(e) => handleScrollTo(e, 'guestbook')}
+              className="px-2.5 py-1.5 rounded hover:text-white hover:bg-white/5 transition"
+            >
+              [ 04. GUESTBOOK ]
+            </a>
+          </li>
+          <li>
+            <a 
               href="#contact" 
               onClick={(e) => handleScrollTo(e, 'contact')}
               className="px-2.5 py-1.5 rounded hover:text-white hover:bg-white/5 transition"
             >
-              [ 04. CONNECT ]
+              [ 05. CONNECT ]
             </a>
           </li>
         </ul>
