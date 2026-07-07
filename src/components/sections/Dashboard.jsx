@@ -31,10 +31,14 @@ import {
   SiVercel
 } from 'react-icons/si';
 import { MdLocationOn, MdSchedule, MdDevices } from 'react-icons/md';
+import { useTheme } from '../../context/ThemeContext';
 
 const MY_EMAIL = "taufiqu.dev@gmail.com";
 
 function Dashboard() {
+  const { theme } = useTheme();
+  const isPro = theme === 'pro';
+
   // CLI States
   const [cliInput, setCliInput] = useState('');
   const [cliLogs, setCliLogs] = useState([
@@ -108,7 +112,12 @@ function Dashboard() {
       const root = document.documentElement;
       localStorage.setItem('user-theme', activeTheme);
       
-      const themes = {
+      const themes = isPro ? {
+        cyan: { primary: '#2563EB', accent: '#059669' }, // Professional royal blue and emerald
+        green: { primary: '#059669', accent: '#047857' }, // Forest green
+        amber: { primary: '#D97706', accent: '#B45309' }, // Warm amber
+        magenta: { primary: '#DB2777', accent: '#BE185D' } // Deep magenta
+      } : {
         cyan: { primary: '#00F2FE', accent: '#00FF7F' },
         green: { primary: '#00FF00', accent: '#39FF14' },
         amber: { primary: '#FFB000', accent: '#FFCC00' },
@@ -119,7 +128,7 @@ function Dashboard() {
       root.style.setProperty('--color-primary', colors.primary);
       root.style.setProperty('--color-accent-green', colors.accent);
     }
-  }, [activeTheme]);
+  }, [activeTheme, isPro]);
 
   // Live Client FPS Tracker
   useEffect(() => {
@@ -717,15 +726,21 @@ function Dashboard() {
       {isGlitchActive && <GlitchOverlay onClose={() => setIsGlitchActive(false)} />}
       <section 
         id="sandbox" 
-        className="bg-[#0B0F17] py-24 px-4 sm:px-6 lg:px-8 border-t border-white/5"
+        className="bg-[var(--color-background)] py-24 px-4 sm:px-6 lg:px-8 border-t border-[var(--color-outline)] transition-colors duration-500"
       >
         <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="mb-16 text-center md:text-left">
-          <p className="font-mono-code text-xs text-[var(--color-primary)] uppercase tracking-[0.2em] mb-2">
-            [ 02. Interactive Tech Playground ]
-          </p>
-          <h2 className="text-3xl font-extrabold uppercase tracking-wider text-white sm:text-4xl">
+          {isPro ? (
+            <p className="text-xs text-[var(--color-primary)] uppercase tracking-[0.2em] mb-2 font-semibold">
+              Interactive Tech Playground
+            </p>
+          ) : (
+            <p className="font-mono-code text-xs text-[var(--color-primary)] uppercase tracking-[0.2em] mb-2">
+              [ 02. Interactive Tech Playground ]
+            </p>
+          )}
+          <h2 className="text-3xl font-extrabold uppercase tracking-wider sm:text-4xl" style={{ color: 'var(--color-text)' }}>
             Tech Space & Sandbox
           </h2>
           <div className="h-1 w-16 bg-[var(--color-primary)] mt-4 mx-auto md:mx-0" />
@@ -739,55 +754,57 @@ function Dashboard() {
              ==================================================== */}
           
           {/* Card 1: CLI Console - Spans 6 cols */}
-          <div className="bento-card p-6 md:col-span-6 flex flex-col justify-between min-h-[340px]">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <FaTerminal className="text-[var(--color-primary)] animate-pulse" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] font-mono-code">CLI Console Terminal</span>
-              </div>
+          {!isPro && (
+            <div className="bento-card p-6 md:col-span-6 flex flex-col justify-between min-h-[340px]">
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <FaTerminal className="text-[var(--color-primary)] animate-pulse" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] font-mono-code">CLI Console Terminal</span>
+                </div>
 
-              {/* Console logs box */}
-              <div ref={logsContainerRef} className="rounded-xl bg-black/60 p-4 border border-white/5 font-mono-code text-[11px] h-48 overflow-y-auto mb-4 flex flex-col gap-1.5 scrollbar-thin">
-                {cliLogs.map((log, idx) => (
-                  <div key={idx} className="leading-relaxed">
-                    {log.type === 'input' && <span className="text-white font-bold">{log.text}</span>}
-                    {log.type === 'system' && <span className="text-[var(--color-accent-green)]">{log.text}</span>}
-                    {log.type === 'output' && <span className="text-[var(--color-text-muted)]">{log.text}</span>}
-                    {log.type === 'err' && <span className="text-red-400">{log.text}</span>}
-                  </div>
-                ))}
-              </div>
+                {/* Console logs box */}
+                <div ref={logsContainerRef} className="rounded-xl bg-black/60 p-4 border border-white/5 font-mono-code text-[11px] h-48 overflow-y-auto mb-4 flex flex-col gap-1.5 scrollbar-thin">
+                  {cliLogs.map((log, idx) => (
+                    <div key={idx} className="leading-relaxed">
+                      {log.type === 'input' && <span className="text-white font-bold">{log.text}</span>}
+                      {log.type === 'system' && <span className="text-[var(--color-accent-green)]">{log.text}</span>}
+                      {log.type === 'output' && <span className="text-[var(--color-text-muted)]">{log.text}</span>}
+                      {log.type === 'err' && <span className="text-red-400">{log.text}</span>}
+                    </div>
+                  ))}
+                </div>
 
-              {/* Console Form Input */}
-              <form onSubmit={handleCliSubmit} className="flex gap-2">
-                <span className="font-mono-code text-xs text-white self-center">
-                  {cliMode === 'normal' ? '~$ ' : cliMode === 'guestbook_name' ? 'name:~$ ' : 'msg:~$ '}
-                </span>
-                <input 
-                  type="text" 
-                  value={cliInput}
-                  onChange={(e) => setCliInput(e.target.value)}
-                  placeholder={
-                    cliMode === 'normal' 
-                      ? "type 'help'..." 
-                      : cliMode === 'guestbook_name' 
-                      ? "Enter your name..." 
-                      : "Enter your message..."
-                  }
-                  className="flex-1 bg-black/30 border border-white/10 rounded-lg p-2 font-mono-code text-xs text-white placeholder-white/20 outline-none focus:border-[var(--color-primary)]"
-                />
-                <button 
-                  type="submit" 
-                  className="bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 px-4 rounded-lg text-xs font-mono-code font-bold hover:bg-[var(--color-primary)] hover:text-[#0B0F17] transition"
-                >
-                  EXEC
-                </button>
-              </form>
+                {/* Console Form Input */}
+                <form onSubmit={handleCliSubmit} className="flex gap-2">
+                  <span className="font-mono-code text-xs text-white self-center">
+                    {cliMode === 'normal' ? '~$ ' : cliMode === 'guestbook_name' ? 'name:~$ ' : 'msg:~$ '}
+                  </span>
+                  <input 
+                    type="text" 
+                    value={cliInput}
+                    onChange={(e) => setCliInput(e.target.value)}
+                    placeholder={
+                      cliMode === 'normal' 
+                        ? "type 'help'..." 
+                        : cliMode === 'guestbook_name' 
+                        ? "Enter your name..." 
+                        : "Enter your message..."
+                    }
+                    className="flex-1 bg-black/30 border border-white/10 rounded-lg p-2 font-mono-code text-xs text-white placeholder-white/20 outline-none focus:border-[var(--color-primary)]"
+                  />
+                  <button 
+                    type="submit" 
+                    className="bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 px-4 rounded-lg text-xs font-mono-code font-bold hover:bg-[var(--color-primary)] hover:text-[#0B0F17] transition"
+                  >
+                    EXEC
+                  </button>
+                </form>
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Card 2: Resource Monitor - Spans 6 cols */}
-          <div className="bento-card p-6 md:col-span-6 flex flex-col justify-between min-h-[340px]">
+          {/* Card 2: Resource Monitor - Spans 6 cols (or 12 in PRO) */}
+          <div className={`bento-card p-6 flex flex-col justify-between min-h-[340px] ${isPro ? 'md:col-span-12' : 'md:col-span-6'}`}>
             <div>
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
@@ -803,10 +820,10 @@ function Dashboard() {
               <div className="space-y-4 font-mono-code text-xs">
                 <div>
                   <div className="flex justify-between mb-1.5">
-                    <span className="font-semibold text-white">Frontend Render (FPS Health)</span>
+                    <span className="font-semibold" style={{ color: 'var(--color-text)' }}>Frontend Render (FPS Health)</span>
                     <span className="text-[var(--color-primary)]">{fps} FPS</span>
                   </div>
-                  <div className="h-2 w-full bg-black/30 rounded-full overflow-hidden border border-white/5">
+                  <div className="h-2 w-full bg-black/5 rounded-full overflow-hidden border border-[var(--color-outline)] dark:bg-black/30">
                     <div 
                       className="h-full bg-[var(--color-primary)] rounded-full transition-all duration-300" 
                       style={{ width: `${Math.round((fps / 60) * 100)}%` }} 
@@ -816,10 +833,10 @@ function Dashboard() {
 
                 <div>
                   <div className="flex justify-between mb-1.5">
-                    <span className="font-semibold text-white">Vercel Edge Network (Latency)</span>
+                    <span className="font-semibold" style={{ color: 'var(--color-text)' }}>Vercel Edge Network (Latency)</span>
                     <span className="text-[var(--color-primary)]">{edgePing} MS</span>
                   </div>
-                  <div className="h-2 w-full bg-black/30 rounded-full overflow-hidden border border-white/5">
+                  <div className="h-2 w-full bg-black/5 rounded-full overflow-hidden border border-[var(--color-outline)] dark:bg-black/30">
                     <div 
                       className="h-full bg-[var(--color-primary)] rounded-full transition-all duration-300" 
                       style={{ width: `${Math.max(10, Math.min(100, 100 - Math.round(edgePing / 5)))}%` }} 
@@ -829,10 +846,10 @@ function Dashboard() {
 
                 <div>
                   <div className="flex justify-between mb-1.5">
-                    <span className="font-semibold text-white">Supabase DB Query (Response)</span>
+                    <span className="font-semibold" style={{ color: 'var(--color-text)' }}>Supabase DB Query (Response)</span>
                     <span className="text-[var(--color-primary)]">{dbPing} MS</span>
                   </div>
-                  <div className="h-2 w-full bg-black/30 rounded-full overflow-hidden border border-white/5">
+                  <div className="h-2 w-full bg-black/5 rounded-full overflow-hidden border border-[var(--color-outline)] dark:bg-black/30">
                     <div 
                       className="h-full bg-[var(--color-primary)] rounded-full transition-all duration-300" 
                       style={{ width: `${Math.max(10, Math.min(100, 100 - Math.round(dbPing / 10)))}%` }} 
@@ -843,38 +860,38 @@ function Dashboard() {
             </div>
 
             {/* Micro Skill tags & Accent Theme Switcher */}
-            <div className="mt-6 border-t border-white/5 pt-4 flex flex-col lg:flex-row justify-between gap-6">
+            <div className="mt-6 border-t border-[var(--color-outline)] pt-4 flex flex-col lg:flex-row justify-between gap-6">
               <div className="flex-1">
                 <p className="text-[10px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] mb-3">Loaded System Modules:</p>
                 <div className="flex flex-wrap gap-2">
-                  <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                    <SiReact className="text-sky-400" />
+                  <span className="inline-flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded text-xs text-[var(--color-text)] border border-[var(--color-outline)]">
+                    <SiReact className="text-sky-500" />
                     <span>React</span>
                   </span>
-                  <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                    <SiNextdotjs className="text-white" />
+                  <span className="inline-flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded text-xs text-[var(--color-text)] border border-[var(--color-outline)]">
+                    <SiNextdotjs className="text-neutral-800 dark:text-white" />
                     <span>Next.js</span>
                   </span>
-                  <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                    <SiJavascript className="text-yellow-400" />
+                  <span className="inline-flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded text-xs text-[var(--color-text)] border border-[var(--color-outline)]">
+                    <SiJavascript className="text-yellow-600 dark:text-yellow-400" />
                     <span>JS</span>
                   </span>
-                  <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                    <SiTailwindcss className="text-cyan-400" />
+                  <span className="inline-flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded text-xs text-[var(--color-text)] border border-[var(--color-outline)]">
+                    <SiTailwindcss className="text-cyan-500" />
                     <span>Tailwind</span>
                   </span>
-                  <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                    <SiSupabase className="text-emerald-500" />
+                  <span className="inline-flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded text-xs text-[var(--color-text)] border border-[var(--color-outline)]">
+                    <SiSupabase className="text-emerald-600 dark:text-emerald-500" />
                     <span>Supabase</span>
                   </span>
-                  <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                    <SiVercel className="text-white" />
+                  <span className="inline-flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded text-xs text-[var(--color-text)] border border-[var(--color-outline)]">
+                    <SiVercel className="text-neutral-800 dark:text-white" />
                     <span>Vercel</span>
                   </span>
                 </div>
               </div>
 
-              <div className="lg:border-l lg:border-white/5 lg:pl-6 shrink-0">
+              <div className="lg:border-l lg:border-[var(--color-outline)] lg:pl-6 shrink-0">
                 <p className="text-[10px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] mb-3">System Accent Theme:</p>
                 <div className="flex flex-wrap gap-2">
                   {[
@@ -888,8 +905,8 @@ function Dashboard() {
                       onClick={() => setActiveTheme(t.id)}
                       className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono-code border transition-all ${
                         activeTheme === t.id
-                          ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-white font-bold'
-                          : 'border-white/10 bg-white/5 text-[var(--color-text-muted)] hover:text-white hover:border-white/20'
+                          ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-[var(--color-text)] font-bold'
+                          : 'border-[var(--color-outline)] bg-black/5 dark:bg-white/5 text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:border-white/20'
                       }`}
                     >
                       <span className={`w-1.5 h-1.5 rounded-full ${t.color} inline-block`} />
@@ -907,10 +924,10 @@ function Dashboard() {
 
           {/* Card 3: Spotify Player - Spans 4 cols */}
           <div className="bento-card p-6 md:col-span-4 flex flex-col justify-between gap-4 min-h-[220px]">
-            <div className="flex items-center justify-between text-xs uppercase tracking-wider text-[var(--color-text-muted)] font-mono-code">
+            <div className="flex items-center justify-between text-xs uppercase tracking-wider text-[var(--color-text-muted)] font-semibold">
               <div className="flex items-center gap-2">
                 <FaSpotify className="text-[#1DB954] animate-spin" style={{ animationDuration: '6s' }} />
-                <span>Coding Soundtrack</span>
+                <span>{isPro ? 'Music Player' : 'Coding Soundtrack'}</span>
               </div>
               <button 
                 onClick={() => {
@@ -919,7 +936,7 @@ function Dashboard() {
                   setMusicSearchResults([]);
                   setHasSearched(false);
                 }} 
-                className="text-[var(--color-text-muted)] hover:text-white transition p-1"
+                className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition p-1"
                 title={isSearchActive ? "Back to Player" : "Search Library"}
               >
                 {isSearchActive ? <FaTimes className="text-xs" /> : <FaSearch className="text-xs" />}
@@ -934,12 +951,14 @@ function Dashboard() {
                     value={musicSearchQuery}
                     onChange={(e) => setMusicSearchQuery(e.target.value)}
                     placeholder="Search song / artist..."
-                    className="flex-grow bg-black/30 border border-white/10 rounded-lg px-2 py-1.5 font-mono-code text-[11px] text-white placeholder-white/20 outline-none focus:border-[var(--color-primary)]"
+                    className="flex-grow bg-black/5 dark:bg-black/30 border border-[var(--color-outline)] rounded-lg px-2 py-1.5 text-[11px] text-[var(--color-text)] placeholder-slate-400 dark:placeholder-white/20 outline-none focus:border-[var(--color-primary)]"
+                    style={{ fontFamily: isPro ? 'inherit' : 'Fira Code, monospace' }}
                     autoFocus
                   />
                   <button
                     type="submit"
-                    className="bg-[#1DB954]/10 text-[#1DB954] border border-[#1DB954]/20 px-2 rounded-lg text-[10px] font-mono-code font-bold hover:bg-[#1DB954] hover:text-[#0B0F17] transition"
+                    className="bg-[#1DB954]/10 text-[#1DB954] border border-[#1DB954]/20 px-2 rounded-lg text-[10px] font-bold hover:bg-[#1DB954] hover:text-white dark:hover:text-[#0B0F17] transition"
+                    style={{ fontFamily: isPro ? 'inherit' : 'Fira Code, monospace' }}
                   >
                     FIND
                   </button>
@@ -947,13 +966,13 @@ function Dashboard() {
 
                 <div className="overflow-y-auto max-h-[100px] flex flex-col gap-1.5 pr-0.5 scrollbar-thin">
                   {isMusicSearching ? (
-                    <p className="text-[9px] font-mono-code text-[var(--color-text-muted)] text-center py-2">SEARCHING LIBRARY...</p>
+                    <p className="text-[9px] text-[var(--color-text-muted)] text-center py-2" style={{ fontFamily: isPro ? 'inherit' : 'Fira Code, monospace' }}>SEARCHING LIBRARY...</p>
                   ) : musicSearchResults.length > 0 ? (
                     musicSearchResults.map((track) => (
                       <div
                         key={track.trackId}
                         onClick={() => handleSelectSearchResult(track)}
-                        className="flex items-center gap-2 p-1 rounded bg-white/5 hover:bg-white/10 cursor-pointer transition border border-white/5 min-w-0"
+                        className="flex items-center gap-2 p-1 rounded bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 cursor-pointer transition border border-[var(--color-outline)] min-w-0"
                       >
                         {track.artworkUrl30 && (
                           <img
@@ -963,22 +982,22 @@ function Dashboard() {
                           />
                         )}
                         <div className="min-w-0 flex-1">
-                          <p className="text-[10px] font-semibold text-white truncate">{track.trackName}</p>
+                          <p className="text-[10px] font-semibold text-[var(--color-text)] truncate">{track.trackName}</p>
                           <p className="text-[9px] text-[var(--color-text-muted)] truncate">{track.artistName}</p>
                         </div>
                       </div>
                     ))
                   ) : hasSearched ? (
-                    <p className="text-[9px] font-mono-code text-red-400 text-center py-2">NO TRACKS FOUND.</p>
+                    <p className="text-[9px] text-red-400 text-center py-2" style={{ fontFamily: isPro ? 'inherit' : 'Fira Code, monospace' }}>NO TRACKS FOUND.</p>
                   ) : (
-                    <p className="text-[9px] font-mono-code text-[var(--color-text-muted)] text-center py-2">SEARCH 70M+ SONGS ON ITUNES</p>
+                    <p className="text-[9px] text-[var(--color-text-muted)] text-center py-2" style={{ fontFamily: isPro ? 'inherit' : 'Fira Code, monospace' }}>SEARCH 70M+ SONGS ON ITUNES</p>
                   )}
                 </div>
               </div>
             ) : (
               <div className="flex items-center gap-4 flex-grow my-auto">
                 <div 
-                  className="relative group cursor-pointer h-14 w-14 shrink-0 rounded-xl overflow-hidden border border-white/10"
+                  className="relative group cursor-pointer h-14 w-14 shrink-0 rounded-xl overflow-hidden border border-[var(--color-outline)]"
                   onClick={handlePlaySnippet}
                 >
                   {songInfo.cover && (
@@ -997,10 +1016,10 @@ function Dashboard() {
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="text-sm font-semibold truncate text-white">{songInfo.title}</p>
+                    <p className="text-sm font-semibold truncate text-[var(--color-text)]">{songInfo.title}</p>
                     <button 
                       onClick={handleNextSong} 
-                      className="text-[var(--color-text-muted)] hover:text-white hover:scale-110 transition p-1 shrink-0"
+                      className="text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:scale-110 transition p-1 shrink-0"
                       title="Next Song"
                     >
                       <FaStepForward className="text-[10px]" />
@@ -1009,7 +1028,7 @@ function Dashboard() {
                   <p className="text-xs truncate text-[var(--color-text-muted)] mb-2">{songInfo.artist}</p>
                   
                   {/* Custom Audio Progress bar */}
-                  <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
+                  <div className="h-1 w-full bg-black/10 dark:bg-white/10 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-[#1DB954] rounded-full transition-all duration-100" 
                       style={{ width: `${songProgress}%` }}
@@ -1019,8 +1038,11 @@ function Dashboard() {
               </div>
             )}
 
-            <div className="text-[9px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] border-t border-white/5 pt-3">
-              Source: iTunes API // YTM Playlist
+            <div 
+              className="text-[9px] uppercase tracking-wider text-[var(--color-text-muted)] border-t border-[var(--color-outline)] pt-3"
+              style={{ fontFamily: isPro ? 'inherit' : 'Fira Code, monospace' }}
+            >
+              {isPro ? 'Source: iTunes API & YouTube Music' : 'Source: iTunes API // YTM Playlist'}
             </div>
             
             <audio ref={audioRef} src={songInfo.audioUrl || null} preload="auto" />
@@ -1028,37 +1050,40 @@ function Dashboard() {
 
           {/* Card 4: GitHub Stats Dashboard - Spans 4 cols */}
           <div className="bento-card p-4 md:col-span-4 flex flex-col justify-between min-h-[220px]">
-            <div className="flex items-center justify-between gap-2 text-xs uppercase tracking-wider text-[var(--color-text-muted)] font-mono-code mb-2 w-full">
+            <div className="flex items-center justify-between gap-2 text-xs uppercase tracking-wider text-[var(--color-text-muted)] mb-2 w-full font-semibold">
               <div className="flex items-center gap-1.5 shrink-0">
                 <FaGithub className="text-[var(--color-primary)]" />
-                <span className="hidden sm:inline">GitHub Logs</span>
+                <span className="hidden sm:inline">{isPro ? 'GitHub Insights' : 'GitHub Logs'}</span>
               </div>
-              <div className="flex gap-1 text-[8px] sm:text-[9px]">
+              <div className="flex gap-1 text-[8px] sm:text-[9px]" style={{ fontFamily: isPro ? 'inherit' : 'Fira Code, monospace' }}>
                 <button 
                   onClick={() => setGithubTab('stats')}
-                  className={`px-1.5 py-0.5 rounded border transition ${githubTab === 'stats' ? 'bg-[var(--color-primary)]/10 border-[var(--color-primary)]/30 text-[var(--color-primary)] font-bold' : 'border-transparent text-[var(--color-text-muted)] hover:text-white'}`}
+                  className={`px-1.5 py-0.5 rounded border transition ${githubTab === 'stats' ? 'bg-[var(--color-primary)]/10 border-[var(--color-primary)]/30 text-[var(--color-primary)] font-bold' : 'border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
                 >
-                  STATS
+                  {isPro ? 'Stats' : 'STATS'}
                 </button>
                 <button 
                   onClick={() => setGithubTab('streak')}
-                  className={`px-1.5 py-0.5 rounded border transition ${githubTab === 'streak' ? 'bg-[var(--color-primary)]/10 border-[var(--color-primary)]/30 text-[var(--color-primary)] font-bold' : 'border-transparent text-[var(--color-text-muted)] hover:text-white'}`}
+                  className={`px-1.5 py-0.5 rounded border transition ${githubTab === 'streak' ? 'bg-[var(--color-primary)]/10 border-[var(--color-primary)]/30 text-[var(--color-primary)] font-bold' : 'border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
                 >
-                  STREAK
+                  {isPro ? 'Streak' : 'STREAK'}
                 </button>
                 <button 
                   onClick={() => setGithubTab('langs')}
-                  className={`px-1.5 py-0.5 rounded border transition ${githubTab === 'langs' ? 'bg-[var(--color-primary)]/10 border-[var(--color-primary)]/30 text-[var(--color-primary)] font-bold' : 'border-transparent text-[var(--color-text-muted)] hover:text-white'}`}
+                  className={`px-1.5 py-0.5 rounded border transition ${githubTab === 'langs' ? 'bg-[var(--color-primary)]/10 border-[var(--color-primary)]/30 text-[var(--color-primary)] font-bold' : 'border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text)]'}`}
                 >
-                  LANGS
+                  {isPro ? 'Languages' : 'LANGS'}
                 </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-center overflow-hidden rounded-lg bg-black/25 p-1 flex-grow min-h-[120px] transition-all duration-300">
+            <div className="flex items-center justify-center overflow-hidden rounded-lg bg-black/5 dark:bg-black/25 p-1 flex-grow min-h-[120px] transition-all duration-300">
               {githubTab === 'stats' && (
                 <img 
-                  src="https://github-stats-extended.vercel.app/api?username=Taufiqu&show_icons=true&theme=transparent&hide_border=true&icon_color=00FF7F&title_color=00FF7F&text_color=E0E0E0&bg_color=00000000&count_private=true"
+                  src={isPro 
+                    ? "https://github-stats-extended.vercel.app/api?username=Taufiqu&show_icons=true&theme=transparent&hide_border=true&icon_color=2563EB&title_color=2563EB&text_color=475569&bg_color=00000000&count_private=true"
+                    : "https://github-stats-extended.vercel.app/api?username=Taufiqu&show_icons=true&theme=transparent&hide_border=true&icon_color=00FF7F&title_color=00FF7F&text_color=E0E0E0&bg_color=00000000&count_private=true"
+                  }
                   alt="Github Account Stats"
                   loading="lazy"
                   className="w-full max-h-[140px] object-contain animate-fadeIn"
@@ -1066,7 +1091,10 @@ function Dashboard() {
               )}
               {githubTab === 'streak' && (
                 <img 
-                  src="https://github-readme-streak-stats.herokuapp.com/?user=Taufiqu&theme=transparent&hide_border=true&stroke=00FF7F&ring=00FF7F&fire=00FF7F&currStreakNum=E0E0E0&sideNums=E0E0E0&currStreakLabel=00FF7F&sideLabels=00FF7F&background=transparent"
+                  src={isPro
+                    ? "https://github-readme-streak-stats.herokuapp.com/?user=Taufiqu&theme=transparent&hide_border=true&stroke=2563EB&ring=2563EB&fire=2563EB&currStreakNum=0F172A&sideNums=0F172A&currStreakLabel=2563EB&sideLabels=2563EB&background=transparent"
+                    : "https://github-readme-streak-stats.herokuapp.com/?user=Taufiqu&theme=transparent&hide_border=true&stroke=00FF7F&ring=00FF7F&fire=00FF7F&currStreakNum=E0E0E0&sideNums=E0E0E0&currStreakLabel=00FF7F&sideLabels=00FF7F&background=transparent"
+                  }
                   alt="Github Contribution Streak"
                   loading="lazy"
                   className="w-full max-h-[110px] object-contain animate-fadeIn"
@@ -1074,7 +1102,10 @@ function Dashboard() {
               )}
               {githubTab === 'langs' && (
                 <img 
-                  src="https://github-stats-extended.vercel.app/api/top-langs/?username=Taufiqu&layout=compact&theme=transparent&hide_border=true&icon_color=00FF7F&title_color=00FF7F&text_color=E0E0E0&bg_color=00000000&count_private=true"
+                  src={isPro
+                    ? "https://github-stats-extended.vercel.app/api/top-langs/?username=Taufiqu&layout=compact&theme=transparent&hide_border=true&icon_color=2563EB&title_color=2563EB&text_color=475569&bg_color=00000000&count_private=true"
+                    : "https://github-stats-extended.vercel.app/api/top-langs/?username=Taufiqu&layout=compact&theme=transparent&hide_border=true&icon_color=00FF7F&title_color=00FF7F&text_color=E0E0E0&bg_color=00000000&count_private=true"
+                  }
                   alt="Github Top Languages"
                   loading="lazy"
                   className="w-full max-h-[140px] object-contain animate-fadeIn"
@@ -1082,32 +1113,40 @@ function Dashboard() {
               )}
             </div>
 
-            <div className="flex justify-between text-[9px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] border-t border-white/5 pt-3">
-              <span>Account: Taufiqu</span>
+            <div 
+              className="flex justify-between text-[9px] uppercase tracking-wider text-[var(--color-text-muted)] border-t border-[var(--color-outline)] pt-3"
+              style={{ fontFamily: isPro ? 'inherit' : 'Fira Code, monospace' }}
+            >
+              <span>{isPro ? 'Account: Taufiqu' : 'Account: Taufiqu'}</span>
               <a href="https://github.com/Taufiqu" target="_blank" rel="noreferrer" className="text-[var(--color-primary)] hover:underline">
-                profile_sys ↗
+                {isPro ? 'profile ↗' : 'profile_sys ↗'}
               </a>
             </div>
           </div>
 
           {/* Card 5: System Telemetry - Spans 4 cols */}
           <div className="bento-card p-6 md:col-span-4 flex flex-col justify-between min-h-[260px]">
-            <div className="flex items-center justify-between text-xs uppercase tracking-wider text-[var(--color-text-muted)] font-mono-code mb-4">
-              <span>System Telemetry</span>
+            <div className={`flex items-center justify-between text-xs uppercase tracking-wider text-[var(--color-text-muted)] mb-4 ${isPro ? 'font-semibold' : 'font-mono-code'}`}>
+              <span>{isPro ? 'Telemetry Insights' : 'System Telemetry'}</span>
               <div className="flex items-center gap-1.5">
-                <span className="text-[9px] text-[var(--color-accent-green)] font-bold animate-pulse font-mono-code">ONLINE</span>
+                <span 
+                  className="text-[9px] text-[var(--color-accent-green)] font-bold animate-pulse"
+                  style={{ fontFamily: isPro ? 'inherit' : 'Fira Code, monospace' }}
+                >
+                  ONLINE
+                </span>
                 <span className="flex h-2 w-2 rounded-full bg-[var(--color-accent-green)] blink-dot" />
               </div>
             </div>
 
             {/* Telemetry Grid */}
-            <div className="grid grid-cols-2 gap-y-4 gap-x-2 my-2 font-mono-code text-xs border-b border-white/5 pb-4">
+            <div className={`grid grid-cols-2 gap-y-4 gap-x-2 my-2 text-xs border-b border-[var(--color-outline)] pb-4 ${isPro ? 'font-sans' : 'font-mono-code'}`}>
               {/* Node Location */}
               <div className="flex items-start gap-2">
                 <MdLocationOn className="text-base text-[var(--color-primary)] mt-0.5 shrink-0" />
                 <div className="min-w-0">
-                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">NODE_LOC</span>
-                  <span className="text-white font-semibold block truncate">Lampung, ID</span>
+                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">{isPro ? 'Location' : 'NODE_LOC'}</span>
+                  <span className="text-[var(--color-text)] font-semibold block truncate">Lampung, ID</span>
                 </div>
               </div>
 
@@ -1115,9 +1154,9 @@ function Dashboard() {
               <div className="flex items-start gap-2">
                 <FaUsers className="text-base text-[var(--color-accent-green)] mt-0.5 shrink-0" />
                 <div className="min-w-0">
-                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">LIVE_NODES</span>
-                  <span className="text-white font-semibold block">
-                    {liveVisitors !== null ? liveVisitors : '---'} <span className="text-[10px] text-[var(--color-accent-green)]">(Active)</span>
+                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">{isPro ? 'Active Users' : 'LIVE_NODES'}</span>
+                  <span className="text-[var(--color-text)] font-semibold block">
+                    {liveVisitors !== null ? liveVisitors : '---'} <span className="text-[10px] text-[var(--color-accent-green)]">({isPro ? 'Active' : 'Active'})</span>
                   </span>
                 </div>
               </div>
@@ -1126,8 +1165,8 @@ function Dashboard() {
               <div className="flex items-start gap-2">
                 <MdSchedule className="text-base text-[var(--color-primary)] mt-0.5 shrink-0" />
                 <div className="min-w-0">
-                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">WORK_HOURS</span>
-                  <span className="text-white font-semibold block truncate">UTC+7 · Evenings</span>
+                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">{isPro ? 'Working Hours' : 'WORK_HOURS'}</span>
+                  <span className="text-[var(--color-text)] font-semibold block truncate">UTC+7 · Evenings</span>
                 </div>
               </div>
 
@@ -1135,8 +1174,8 @@ function Dashboard() {
               <div className="flex items-start gap-2">
                 <FaEye className="text-base text-[var(--color-primary)] mt-0.5 shrink-0" />
                 <div className="min-w-0">
-                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">SYS_REQS</span>
-                  <span className="text-white font-semibold block">
+                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">{isPro ? 'Page Views' : 'SYS_REQS'}</span>
+                  <span className="text-[var(--color-text)] font-semibold block">
                     {totalVisits !== null ? totalVisits.toLocaleString() : '---'}
                   </span>
                 </div>
@@ -1146,8 +1185,8 @@ function Dashboard() {
               <div className="flex items-start gap-2">
                 <MdDevices className="text-base text-[var(--color-primary)] mt-0.5 shrink-0" />
                 <div className="min-w-0">
-                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">CLIENT_NODE</span>
-                  <span className="text-white font-semibold block truncate">{clientNode.os} · {clientNode.browser}</span>
+                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">{isPro ? 'Your Device' : 'CLIENT_NODE'}</span>
+                  <span className="text-[var(--color-text)] font-semibold block truncate">{clientNode.os} · {clientNode.browser}</span>
                 </div>
               </div>
 
@@ -1155,15 +1194,18 @@ function Dashboard() {
               <div className="flex items-start gap-2">
                 <FaServer className="text-base text-[var(--color-primary)] mt-0.5 shrink-0" />
                 <div className="min-w-0">
-                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">DATA_XFER</span>
-                  <span className="text-white font-semibold block">{dataTransfer} KB/s</span>
+                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">{isPro ? 'Transfer Rate' : 'DATA_XFER'}</span>
+                  <span className="text-[var(--color-text)] font-semibold block">{dataTransfer} KB/s</span>
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-between text-[9px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] pt-2">
-              <span>Uptime: {systemStats.uptime}</span>
-              <span>PING: {systemStats.latency}MS</span>
+            <div 
+              className="flex justify-between text-[9px] uppercase tracking-wider text-[var(--color-text-muted)] pt-2"
+              style={{ fontFamily: isPro ? 'inherit' : 'Fira Code, monospace' }}
+            >
+              <span>{isPro ? `Uptime: ${systemStats.uptime}` : `Uptime: ${systemStats.uptime}`}</span>
+              <span>{isPro ? `Latency: ${systemStats.latency}ms` : `PING: ${systemStats.latency}MS`}</span>
             </div>
           </div>
           </div>

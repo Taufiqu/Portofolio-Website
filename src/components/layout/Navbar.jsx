@@ -1,17 +1,25 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useTheme } from '../../context/ThemeContext';
+
+// Nav items: each has DEV label and PRO label
+const NAV_ITEMS = [
+  { id: 'projects',  dev: '[ 01. WORK ]',      pro: 'Work'      },
+  { id: 'sandbox',   dev: '[ 02. SANDBOX ]',    pro: 'Sandbox'   },
+  { id: 'journey',   dev: '[ 03. HISTORY ]',    pro: 'History'   },
+  { id: 'guestbook', dev: '[ 04. GUESTBOOK ]',  pro: 'Guestbook' },
+  { id: 'contact',   dev: '[ 05. CONNECT ]',    pro: 'Connect'   },
+];
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const { theme, switchTheme, isTransitioning } = useTheme();
+  const isPro = theme === 'pro';
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -29,86 +37,102 @@ function Navbar() {
     e.preventDefault();
     const element = document.getElementById(id);
     if (element) {
-      const offset = 80; // Offset for fixed navbar
+      const offset = 80;
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = element.getBoundingClientRect().top;
-      const elementPosition = elementRect - bodyRect;
-      const offsetPosition = elementPosition - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-
-      // Bersihkan hash dari URL supaya refresh tidak auto-scroll ke section
+      const offsetPosition = elementRect - bodyRect - offset;
+      window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
       history.replaceState(null, '', window.location.pathname);
     }
   };
 
+  const handleThemeSwitch = () => {
+    if (isTransitioning) return;
+    switchTheme(isPro ? 'dev' : 'pro');
+  };
+
   return (
-    <nav className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b ${
-      scrolled 
-        ? 'bg-[#0B0F17]/85 backdrop-blur-md py-4 border-white/5 shadow-lg' 
-        : 'bg-transparent py-6 border-transparent'
-    }`}>
+    <nav
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 border-b ${
+        scrolled
+          ? 'backdrop-blur-md py-4 shadow-lg'
+          : 'bg-transparent py-6 border-transparent'
+      }`}
+      style={scrolled ? {
+        backgroundColor: isPro ? 'rgba(248,250,252,0.85)' : 'rgba(11,15,23,0.85)',
+        borderBottomColor: isPro ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.05)',
+      } : {}}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-        {/* Logo/Branding */}
-        <a 
-          href="#home" 
+        {/* Logo */}
+        <a
+          href="#home"
           onClick={(e) => handleScrollTo(e, 'home')}
-          className="font-mono-code text-sm font-bold tracking-widest text-white hover:text-[var(--color-primary)] transition"
+          className={`text-sm font-bold tracking-widest hover:text-[var(--color-primary)] transition ${
+            isPro ? 'font-sans' : 'font-mono-code'
+          }`}
+          style={{ color: 'var(--color-text)' }}
         >
-          TAUFIQU <span className="text-[var(--color-primary)]">//</span> ARCH
+          {isPro ? (
+            <span>Taufiqu <span style={{ color: 'var(--color-primary)' }}>·</span> Portfolio</span>
+          ) : (
+            <>TAUFIQU <span style={{ color: 'var(--color-primary)' }}>//</span> ARCH</>
+          )}
         </a>
 
-        {/* Nav items */}
-        <ul className="flex items-center gap-2 sm:gap-4 font-mono-code text-[10px] sm:text-[11px] text-[var(--color-text-muted)]">
-          <li>
-            <a 
-              href="#projects" 
-              onClick={(e) => handleScrollTo(e, 'projects')}
-              className="px-2.5 py-1.5 rounded hover:text-white hover:bg-white/5 transition"
-            >
-              [ 01. WORK ]
-            </a>
-          </li>
-          <li>
-            <a 
-              href="#sandbox" 
-              onClick={(e) => handleScrollTo(e, 'sandbox')}
-              className="px-2.5 py-1.5 rounded hover:text-white hover:bg-white/5 transition"
-            >
-              [ 02. SANDBOX ]
-            </a>
-          </li>
-          <li>
-            <a 
-              href="#journey" 
-              onClick={(e) => handleScrollTo(e, 'journey')}
-              className="px-2.5 py-1.5 rounded hover:text-white hover:bg-white/5 transition"
-            >
-              [ 03. HISTORY ]
-            </a>
-          </li>
-          <li>
-            <a 
-              href="#guestbook" 
-              onClick={(e) => handleScrollTo(e, 'guestbook')}
-              className="px-2.5 py-1.5 rounded hover:text-white hover:bg-white/5 transition"
-            >
-              [ 04. GUESTBOOK ]
-            </a>
-          </li>
-          <li>
-            <a 
-              href="#contact" 
-              onClick={(e) => handleScrollTo(e, 'contact')}
-              className="px-2.5 py-1.5 rounded hover:text-white hover:bg-white/5 transition"
-            >
-              [ 05. CONNECT ]
-            </a>
-          </li>
-        </ul>
+        <div className="flex items-center gap-3">
+          {/* Nav items */}
+          <ul className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-[11px]"
+              style={{ color: 'var(--color-text-muted)', fontFamily: isPro ? 'inherit' : undefined }}
+          >
+            {NAV_ITEMS.map(item => (
+              <li key={item.id}>
+                <a
+                  href={`#${item.id}`}
+                  onClick={(e) => handleScrollTo(e, item.id)}
+                  className={`px-2.5 py-1.5 rounded transition-all ${
+                    isPro
+                      ? 'hover:text-[var(--color-text)] hover:bg-black/5 font-medium text-[12px]'
+                      : 'font-mono-code hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {isPro ? item.pro : item.dev}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          {/* Theme switcher button */}
+          <button
+            onClick={handleThemeSwitch}
+            disabled={isTransitioning}
+            title={isPro ? 'Switch to Dev Mode' : 'Switch to Professional Mode'}
+            className="ml-2 flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[10px] font-bold tracking-wider transition-all active:scale-95 disabled:opacity-50"
+            style={isPro ? {
+              fontFamily: 'inherit',
+              borderColor: 'rgba(0,0,0,0.12)',
+              color: 'var(--color-text-muted)',
+              backgroundColor: 'transparent',
+            } : {
+              fontFamily: 'Fira Code, monospace',
+              borderColor: 'rgba(0,242,254,0.25)',
+              color: 'var(--color-primary)',
+              backgroundColor: 'rgba(0,242,254,0.05)',
+            }}
+          >
+            {isPro ? (
+              <>
+                <span style={{ fontSize: 13 }}>⌨</span>
+                <span>Dev</span>
+              </>
+            ) : (
+              <>
+                <span>{'>'}</span>
+                <span>PRO_MODE</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </nav>
   );
