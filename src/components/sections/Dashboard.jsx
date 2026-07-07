@@ -87,12 +87,14 @@ function Dashboard() {
 
   // Live Visitors and Network Traffic Simulation
   useEffect(() => {
+    // Initial load simulation (realistic range 1 to 2)
+    setLiveVisitors(Math.random() > 0.5 ? 1 : 2);
+
     const interval = setInterval(() => {
-      // Simulate live visitors fluctuating between 2 and 6
+      // Simulate live visitors fluctuating between 1 and 2 (extremely realistic)
       setLiveVisitors(prev => {
-        const change = Math.random() > 0.5 ? 1 : -1;
-        const next = prev + change;
-        return next >= 2 && next <= 6 ? next : prev;
+        const next = Math.random() > 0.5 ? 1 : 2;
+        return next;
       });
       // Simulate network traffic fluctuating between 2.1 and 18.5 KB/s
       setDataTransfer(parseFloat((Math.random() * 16 + 2.5).toFixed(1)));
@@ -102,26 +104,58 @@ function Dashboard() {
 
   // Initialize Total Visits and Client Device Info
   useEffect(() => {
-    // 1. Persistent Total Visits
-    try {
-      const storageKey = 'taufiqu_visits';
-      const sessionKey = 'taufiqu_session_visited';
-      let currentVisits = parseInt(localStorage.getItem(storageKey), 10);
-      
-      if (isNaN(currentVisits)) {
-        currentVisits = 1428; // Seed starting number
+    // 1. Real-time Total Visits via CounterAPI
+    const fetchTotalVisits = async () => {
+      try {
+        const sessionKey = 'taufiqu_session_visited';
+        const isNewSession = !sessionStorage.getItem(sessionKey);
+        
+        let url = 'https://api.counterapi.dev/v1/taufiqu/portfolio';
+        if (isNewSession) {
+          url = 'https://api.counterapi.dev/v1/taufiqu/portfolio/up';
+          sessionStorage.setItem(sessionKey, 'true');
+        }
+        
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          // Add a base offset of 1420 so it feels established and matches the design theme
+          const total = 1420 + (data.count || 0);
+          setTotalVisits(total);
+          
+          // Back up the latest count to localStorage as fallback
+          try {
+            localStorage.setItem('taufiqu_visits_backup', total.toString());
+          } catch (e) {}
+        } else {
+          throw new Error('API response not OK');
+        }
+      } catch (err) {
+        console.warn('CounterAPI fetch failed, falling back to local simulation:', err);
+        // Fallback to localStorage simulation if CounterAPI is blocked/down
+        try {
+          const storageKey = 'taufiqu_visits';
+          const sessionKey = 'taufiqu_session_visited';
+          
+          // Try to restore from backup first, otherwise default to 1428
+          let currentVisits = parseInt(localStorage.getItem('taufiqu_visits_backup') || localStorage.getItem(storageKey), 10);
+          if (isNaN(currentVisits)) {
+            currentVisits = 1428;
+          }
+          
+          if (!sessionStorage.getItem(sessionKey)) {
+            currentVisits += 1;
+            localStorage.setItem(storageKey, currentVisits.toString());
+            sessionStorage.setItem(sessionKey, 'true');
+          }
+          setTotalVisits(currentVisits);
+        } catch (e) {
+          setTotalVisits(1428);
+        }
       }
-      
-      if (!sessionStorage.getItem(sessionKey)) {
-        currentVisits += 1;
-        localStorage.setItem(storageKey, currentVisits.toString());
-        sessionStorage.setItem(sessionKey, 'true');
-      }
-      
-      setTotalVisits(currentVisits);
-    } catch (e) {
-      console.warn('LocalStorage/SessionStorage access failed:', e);
-    }
+    };
+
+    fetchTotalVisits();
 
     // 2. Client Node Detection (OS & Browser)
     if (typeof window !== 'undefined' && window.navigator) {
