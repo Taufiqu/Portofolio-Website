@@ -15,7 +15,9 @@ import {
   FaPlay,
   FaPause,
   FaSpotify,
-  FaMicrochip
+  FaMicrochip,
+  FaEye,
+  FaUsers
 } from 'react-icons/fa';
 import { 
   SiReact, 
@@ -25,7 +27,7 @@ import {
   SiNodedotjs, 
   SiTypescript 
 } from 'react-icons/si';
-import { MdLocationOn, MdSchedule } from 'react-icons/md';
+import { MdLocationOn, MdSchedule, MdDevices } from 'react-icons/md';
 
 const MY_EMAIL = "taufiqu.dev@gmail.com";
 
@@ -44,6 +46,12 @@ function Dashboard() {
     latency: 22,
     uptime: '00:00:00'
   });
+
+  // Visitor and Network Telemetry States
+  const [liveVisitors, setLiveVisitors] = useState(3);
+  const [totalVisits, setTotalVisits] = useState(1428);
+  const [dataTransfer, setDataTransfer] = useState(4.2);
+  const [clientNode, setClientNode] = useState({ os: 'Loading...', browser: 'Detecting...' });
 
   // Spotify Player States
   const [isPlaying, setIsPlaying] = useState(false);
@@ -75,6 +83,69 @@ function Dashboard() {
       }));
     }, 3000);
     return () => clearInterval(interval);
+  }, []);
+
+  // Live Visitors and Network Traffic Simulation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Simulate live visitors fluctuating between 2 and 6
+      setLiveVisitors(prev => {
+        const change = Math.random() > 0.5 ? 1 : -1;
+        const next = prev + change;
+        return next >= 2 && next <= 6 ? next : prev;
+      });
+      // Simulate network traffic fluctuating between 2.1 and 18.5 KB/s
+      setDataTransfer(parseFloat((Math.random() * 16 + 2.5).toFixed(1)));
+    }, 8000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Initialize Total Visits and Client Device Info
+  useEffect(() => {
+    // 1. Persistent Total Visits
+    try {
+      const storageKey = 'taufiqu_visits';
+      const sessionKey = 'taufiqu_session_visited';
+      let currentVisits = parseInt(localStorage.getItem(storageKey), 10);
+      
+      if (isNaN(currentVisits)) {
+        currentVisits = 1428; // Seed starting number
+      }
+      
+      if (!sessionStorage.getItem(sessionKey)) {
+        currentVisits += 1;
+        localStorage.setItem(storageKey, currentVisits.toString());
+        sessionStorage.setItem(sessionKey, 'true');
+      }
+      
+      setTotalVisits(currentVisits);
+    } catch (e) {
+      console.warn('LocalStorage/SessionStorage access failed:', e);
+    }
+
+    // 2. Client Node Detection (OS & Browser)
+    if (typeof window !== 'undefined' && window.navigator) {
+      const ua = window.navigator.userAgent;
+      let os = 'Unknown OS';
+      let browser = 'Unknown Browser';
+
+      // Simple OS detection
+      if (ua.indexOf('Win') !== -1) os = 'Windows';
+      else if (ua.indexOf('Mac') !== -1) os = 'macOS';
+      else if (ua.indexOf('X11') !== -1) os = 'Linux';
+      else if (ua.indexOf('Linux') !== -1) os = 'Linux';
+      else if (/Android/.test(ua)) os = 'Android';
+      else if (/iPhone|iPad|iPod/.test(ua)) os = 'iOS';
+
+      // Simple Browser detection
+      if (ua.indexOf('Chrome') !== -1 && ua.indexOf('Edg') === -1) browser = 'Chrome';
+      else if (ua.indexOf('Safari') !== -1 && ua.indexOf('Chrome') === -1) browser = 'Safari';
+      else if (ua.indexOf('Firefox') !== -1) browser = 'Firefox';
+      else if (ua.indexOf('Edg') !== -1) browser = 'Edge';
+      else if (ua.indexOf('OPR') !== -1 || ua.indexOf('Opera') !== -1) browser = 'Opera';
+
+      setClientNode({ os, browser });
+    }
   }, []);
 
   // Fetch Random Coding Music on Mount
@@ -452,31 +523,76 @@ function Dashboard() {
             </div>
           </div>
 
-          {/* Card 5: System Stats & Status - Spans 4 cols */}
-          <div className="bento-card p-6 md:col-span-4 flex flex-col justify-between min-h-[220px]">
-            <div className="flex items-center justify-between text-xs uppercase tracking-wider text-[var(--color-text-muted)] font-mono-code">
+          {/* Card 5: System Telemetry - Spans 4 cols */}
+          <div className="bento-card p-6 md:col-span-4 flex flex-col justify-between min-h-[260px]">
+            <div className="flex items-center justify-between text-xs uppercase tracking-wider text-[var(--color-text-muted)] font-mono-code mb-4">
               <span>System Telemetry</span>
-              <span className="flex h-2 w-2 rounded-full bg-[var(--color-accent-green)] blink-dot" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-[9px] text-[var(--color-accent-green)] font-bold animate-pulse font-mono-code">ONLINE</span>
+                <span className="flex h-2 w-2 rounded-full bg-[var(--color-accent-green)] blink-dot" />
+              </div>
             </div>
 
-            <div className="space-y-3 my-2 font-mono-code text-xs">
-              <div className="flex items-center gap-2">
-                <MdLocationOn className="text-base text-[var(--color-primary)]" />
-                <div>
+            {/* Telemetry Grid */}
+            <div className="grid grid-cols-2 gap-y-4 gap-x-2 my-2 font-mono-code text-xs border-b border-white/5 pb-4">
+              {/* Node Location */}
+              <div className="flex items-start gap-2">
+                <MdLocationOn className="text-base text-[var(--color-primary)] mt-0.5 shrink-0" />
+                <div className="min-w-0">
                   <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">NODE_LOC</span>
-                  <span className="text-white font-semibold">Lampung, Indonesia</span>
+                  <span className="text-white font-semibold block truncate">Lampung, ID</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <MdSchedule className="text-base text-[var(--color-primary)]" />
-                <div>
+
+              {/* Live Nodes */}
+              <div className="flex items-start gap-2">
+                <FaUsers className="text-base text-[var(--color-accent-green)] mt-0.5 shrink-0" />
+                <div className="min-w-0">
+                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">LIVE_NODES</span>
+                  <span className="text-white font-semibold block">
+                    {liveVisitors} <span className="text-[10px] text-[var(--color-accent-green)]">(Active)</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Working Hours */}
+              <div className="flex items-start gap-2">
+                <MdSchedule className="text-base text-[var(--color-primary)] mt-0.5 shrink-0" />
+                <div className="min-w-0">
                   <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">WORK_HOURS</span>
-                  <span className="text-white font-semibold">UTC+7 · Evenings</span>
+                  <span className="text-white font-semibold block truncate">UTC+7 · Evenings</span>
+                </div>
+              </div>
+
+              {/* Total Request Load */}
+              <div className="flex items-start gap-2">
+                <FaEye className="text-base text-[var(--color-primary)] mt-0.5 shrink-0" />
+                <div className="min-w-0">
+                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">SYS_REQS</span>
+                  <span className="text-white font-semibold block">{totalVisits.toLocaleString()}</span>
+                </div>
+              </div>
+
+              {/* Client device node */}
+              <div className="flex items-start gap-2">
+                <MdDevices className="text-base text-[var(--color-primary)] mt-0.5 shrink-0" />
+                <div className="min-w-0">
+                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">CLIENT_NODE</span>
+                  <span className="text-white font-semibold block truncate">{clientNode.os} · {clientNode.browser}</span>
+                </div>
+              </div>
+
+              {/* Network data transfer */}
+              <div className="flex items-start gap-2">
+                <FaServer className="text-base text-[var(--color-primary)] mt-0.5 shrink-0" />
+                <div className="min-w-0">
+                  <span className="block text-[9px] uppercase text-[var(--color-text-muted)]">DATA_XFER</span>
+                  <span className="text-white font-semibold block">{dataTransfer} KB/s</span>
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-between text-[9px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] border-t border-white/5 pt-3">
+            <div className="flex justify-between text-[9px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] pt-2">
               <span>Uptime: {systemStats.uptime}</span>
               <span>PING: {systemStats.latency}MS</span>
             </div>
