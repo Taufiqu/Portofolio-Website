@@ -73,6 +73,7 @@ function Dashboard() {
   const [musicSearchQuery, setMusicSearchQuery] = useState('');
   const [musicSearchResults, setMusicSearchResults] = useState([]);
   const [isMusicSearching, setIsMusicSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   // Copy Email State
   const [showCopyToast, setShowCopyToast] = useState(false);
@@ -378,6 +379,7 @@ function Dashboard() {
     if (!musicSearchQuery.trim()) return;
 
     setIsMusicSearching(true);
+    setHasSearched(true);
     try {
       const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(musicSearchQuery)}&limit=5&media=music`);
       const data = await res.json();
@@ -399,6 +401,7 @@ function Dashboard() {
     setIsSearchActive(false);
     setMusicSearchQuery('');
     setMusicSearchResults([]);
+    setHasSearched(false);
   };
 
   const handlePlaySnippet = () => {
@@ -605,6 +608,7 @@ function Dashboard() {
                   setIsSearchActive(!isSearchActive);
                   setMusicSearchQuery('');
                   setMusicSearchResults([]);
+                  setHasSearched(false);
                 }} 
                 className="text-[var(--color-text-muted)] hover:text-white transition p-1"
                 title={isSearchActive ? "Back to Player" : "Search Library"}
@@ -655,7 +659,7 @@ function Dashboard() {
                         </div>
                       </div>
                     ))
-                  ) : musicSearchQuery ? (
+                  ) : hasSearched ? (
                     <p className="text-[9px] font-mono-code text-red-400 text-center py-2">NO TRACKS FOUND.</p>
                   ) : (
                     <p className="text-[9px] font-mono-code text-[var(--color-text-muted)] text-center py-2">SEARCH 70M+ SONGS ON ITUNES</p>
