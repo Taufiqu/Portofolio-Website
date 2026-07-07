@@ -86,10 +86,38 @@ function Dashboard() {
   // Copy Email State
   const [showCopyToast, setShowCopyToast] = useState(false);
   const [isGlitchActive, setIsGlitchActive] = useState(false);
+  const [activeTheme, setActiveTheme] = useState('cyan');
 
   const logsContainerRef = useRef(null);
   const isInitialMount = useRef(true);
   const startTimeRef = useRef(Date.now());
+
+  // Load theme from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('user-theme') || 'cyan';
+      setActiveTheme(savedTheme);
+    }
+  }, []);
+
+  // Apply theme colors dynamically
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const root = document.documentElement;
+      localStorage.setItem('user-theme', activeTheme);
+      
+      const themes = {
+        cyan: { primary: '#00F2FE', accent: '#00FF7F' },
+        green: { primary: '#00FF00', accent: '#39FF14' },
+        amber: { primary: '#FFB000', accent: '#FFCC00' },
+        magenta: { primary: '#FF007F', accent: '#D800FF' }
+      };
+      
+      const colors = themes[activeTheme] || themes.cyan;
+      root.style.setProperty('--color-primary', colors.primary);
+      root.style.setProperty('--color-accent-green', colors.accent);
+    }
+  }, [activeTheme]);
 
   // Live Client FPS Tracker
   useEffect(() => {
@@ -684,34 +712,61 @@ function Dashboard() {
               </div>
             </div>
 
-            {/* Micro Skill tags */}
-            <div className="mt-6 border-t border-white/5 pt-4">
-              <p className="text-[10px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] mb-3">Loaded System Modules:</p>
-              <div className="flex flex-wrap gap-2">
-                <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                  <SiReact className="text-sky-400" />
-                  <span>React</span>
-                </span>
-                <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                  <SiNextdotjs className="text-white" />
-                  <span>Next.js</span>
-                </span>
-                <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                  <SiJavascript className="text-yellow-400" />
-                  <span>JS</span>
-                </span>
-                <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                  <SiTailwindcss className="text-cyan-400" />
-                  <span>Tailwind</span>
-                </span>
-                <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                  <SiSupabase className="text-emerald-500" />
-                  <span>Supabase</span>
-                </span>
-                <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
-                  <SiVercel className="text-white" />
-                  <span>Vercel</span>
-                </span>
+            {/* Micro Skill tags & Accent Theme Switcher */}
+            <div className="mt-6 border-t border-white/5 pt-4 flex flex-col lg:flex-row justify-between gap-6">
+              <div className="flex-1">
+                <p className="text-[10px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] mb-3">Loaded System Modules:</p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
+                    <SiReact className="text-sky-400" />
+                    <span>React</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
+                    <SiNextdotjs className="text-white" />
+                    <span>Next.js</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
+                    <SiJavascript className="text-yellow-400" />
+                    <span>JS</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
+                    <SiTailwindcss className="text-cyan-400" />
+                    <span>Tailwind</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
+                    <SiSupabase className="text-emerald-500" />
+                    <span>Supabase</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1 bg-white/5 px-2.5 py-1 rounded text-xs text-white border border-white/10">
+                    <SiVercel className="text-white" />
+                    <span>Vercel</span>
+                  </span>
+                </div>
+              </div>
+
+              <div className="lg:border-l lg:border-white/5 lg:pl-6 shrink-0">
+                <p className="text-[10px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] mb-3">System Accent Theme:</p>
+                <div className="flex flex-wrap gap-2">
+                  {[
+                    { id: 'cyan', label: 'CYAN', color: 'bg-[#00F2FE]' },
+                    { id: 'green', label: 'GREEN', color: 'bg-[#00FF00]' },
+                    { id: 'amber', label: 'AMBER', color: 'bg-[#FFB000]' },
+                    { id: 'magenta', label: 'MAGENTA', color: 'bg-[#FF007F]' }
+                  ].map(t => (
+                    <button
+                      key={t.id}
+                      onClick={() => setActiveTheme(t.id)}
+                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono-code border transition-all ${
+                        activeTheme === t.id
+                          ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10 text-white font-bold'
+                          : 'border-white/10 bg-white/5 text-[var(--color-text-muted)] hover:text-white hover:border-white/20'
+                      }`}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full ${t.color} inline-block`} />
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
