@@ -48,8 +48,8 @@ function Dashboard() {
   });
 
   // Visitor and Network Telemetry States
-  const [liveVisitors, setLiveVisitors] = useState(3);
-  const [totalVisits, setTotalVisits] = useState(1428);
+  const [liveVisitors, setLiveVisitors] = useState(1);
+  const [totalVisits, setTotalVisits] = useState(0);
   const [dataTransfer, setDataTransfer] = useState(4.2);
   const [clientNode, setClientNode] = useState({ os: 'Loading...', browser: 'Detecting...' });
 
