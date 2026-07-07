@@ -31,7 +31,7 @@ import { MdLocationOn, MdSchedule, MdDevices } from 'react-icons/md';
 
 const MY_EMAIL = "taufiqu.dev@gmail.com";
 
-function Dashboard() {
+function Dashboard({ initialTelemetry }) {
   // CLI States
   const [cliInput, setCliInput] = useState('');
   const [cliLogs, setCliLogs] = useState([
@@ -48,8 +48,8 @@ function Dashboard() {
   });
 
   // Visitor and Network Telemetry States
-  const [liveVisitors, setLiveVisitors] = useState(1);
-  const [totalVisits, setTotalVisits] = useState(0);
+  const [liveVisitors, setLiveVisitors] = useState(initialTelemetry?.live ?? 1);
+  const [totalVisits, setTotalVisits] = useState(initialTelemetry?.total ?? 0);
   const [dataTransfer, setDataTransfer] = useState(4.2);
   const [clientNode, setClientNode] = useState({ os: 'Loading...', browser: 'Detecting...' });
 
