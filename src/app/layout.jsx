@@ -1,7 +1,26 @@
 import './globals.css';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Inter, Fira_Code, Plus_Jakarta_Sans } from 'next/font/google';
 import ThemeWrapper from '../components/ui/ThemeWrapper';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const firaCode = Fira_Code({
+  subsets: ['latin'],
+  variable: '--font-fira-code',
+  display: 'swap',
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-plus-jakarta-sans',
+  display: 'swap',
+});
 
 const baseUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
   ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
@@ -44,7 +63,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${firaCode.variable} ${plusJakartaSans.variable}`}>
       <head>
         {/* Anti-flash: apply saved theme before first paint */}
         <script

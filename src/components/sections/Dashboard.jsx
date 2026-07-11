@@ -978,6 +978,8 @@ function Dashboard() {
                           <img
                             src={track.artworkUrl30}
                             alt=""
+                            width={24}
+                            height={24}
                             className="h-6 w-6 rounded object-cover shrink-0"
                           />
                         )}
@@ -1004,6 +1006,8 @@ function Dashboard() {
                     <img 
                       src={songInfo.cover} 
                       alt="Album cover" 
+                      width={56}
+                      height={56}
                       className={`h-full w-full object-cover transition-opacity duration-300 ${isPlaying ? 'opacity-60' : 'group-hover:opacity-60'}`}
                     />
                   )}
@@ -1086,6 +1090,8 @@ function Dashboard() {
                   }
                   alt="Github Account Stats"
                   loading="lazy"
+                  width={495}
+                  height={140}
                   className="w-full max-h-[140px] object-contain animate-fadeIn"
                 />
               )}
@@ -1097,6 +1103,8 @@ function Dashboard() {
                   }
                   alt="Github Contribution Streak"
                   loading="lazy"
+                  width={495}
+                  height={110}
                   className="w-full max-h-[110px] object-contain animate-fadeIn"
                 />
               )}
@@ -1108,6 +1116,8 @@ function Dashboard() {
                   }
                   alt="Github Top Languages"
                   loading="lazy"
+                  width={340}
+                  height={140}
                   className="w-full max-h-[140px] object-contain animate-fadeIn"
                 />
               )}

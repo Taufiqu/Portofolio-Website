@@ -218,6 +218,8 @@ function ProjectsSection() {
                       <img 
                         src={activeProject.image?.src || activeProject.image} 
                         alt={activeProject.title} 
+                        width={640}
+                        height={400}
                         className={`h-full w-full object-cover transition-all duration-300 ${
                           isPro ? '' : 'opacity-85 mix-blend-luminosity hover:mix-blend-normal'
                         }`}
