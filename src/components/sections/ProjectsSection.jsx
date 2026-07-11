@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { PROJECTS_DATA } from '../../data/projects';
 import { FaTerminal, FaFolderOpen, FaFileCode, FaExternalLinkAlt, FaGithub, FaCog } from 'react-icons/fa';
 import { useTheme } from '../../context/ThemeContext';
@@ -215,11 +216,12 @@ function ProjectsSection() {
                     <div className={`relative rounded-xl overflow-hidden h-44 w-full border ${
                       isPro ? 'border-[var(--color-outline)] bg-black/5 dark:bg-white/5' : 'border-slate-800 bg-slate-950/80'
                     }`}>
-                      <img 
-                        src={activeProject.image?.src || activeProject.image} 
+                      <Image 
+                        src={activeProject.image} 
                         alt={activeProject.title} 
                         width={640}
                         height={400}
+                        sizes="(max-width: 768px) 100vw, 421px"
                         className={`h-full w-full object-cover transition-all duration-300 ${
                           isPro ? '' : 'opacity-85 mix-blend-luminosity hover:mix-blend-normal'
                         }`}

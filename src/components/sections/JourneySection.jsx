@@ -72,7 +72,7 @@ function JourneySection() {
           const highlightedHtml = highlightJsonLine(line);
           return (
             <div key={idx} className="flex hover:bg-white/5 px-4 transition-colors duration-100 group">
-              <span className="w-8 text-right select-none text-white/35 pr-3 font-mono-code border-r border-white/5 group-hover:text-white/50">
+              <span className="w-8 text-right select-none text-white/50 pr-3 font-mono-code border-r border-white/5 group-hover:text-white/65">
                 {idx + 1}
               </span>
               <span 
@@ -217,7 +217,7 @@ function JourneySection() {
                       <div
                         key={fileName}
                         onClick={() => setActiveFile(fileName)}
-                        className={`flex items-center gap-2 px-4 py-2 border-r border-[var(--color-outline)] cursor-pointer transition-all duration-100 ${isActive ? 'bg-[#090d16] text-[var(--color-primary)] border-t-2 border-t-[var(--color-primary)] font-bold' : 'text-white/40 hover:bg-white/5 hover:text-white/70'}`}
+                        className={`flex items-center gap-2 px-4 py-2 border-r border-[var(--color-outline)] cursor-pointer transition-all duration-100 ${isActive ? 'bg-[#090d16] text-[var(--color-primary)] border-t-2 border-t-[var(--color-primary)] font-bold' : 'text-white/55 hover:bg-white/5 hover:text-white/70'}`}
                       >
                         <FaFileCode className={`text-[10px] ${isActive ? 'text-[var(--color-primary)]' : 'text-slate-500'}`} />
                         <span>{fileName}</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { JOURNEY_DATA } from '../../data/journey';
 import { 
   FaGithub, 
@@ -66,7 +67,7 @@ function Dashboard() {
   const [songInfo, setSongInfo] = useState({
     title: 'Loading...',
     artist: 'Booting Audio Node',
-    cover: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&auto=format&fit=crop',
+    cover: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=80&auto=format&fit=crop',
     audioUrl: null
   });
   const audioRef = useRef(null);
@@ -318,7 +319,7 @@ function Dashboard() {
           setSongInfo({
             title: 'Am I Bothering You?',
             artist: 'Reality Club',
-            cover: 'https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/bf/f4/1e/bff41e24-912b-31e2-b130-4e2b027d14d2/cover.jpg/300x300bb.jpg',
+            cover: 'https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/bf/f4/1e/bff41e24-912b-31e2-b130-4e2b027d14d2/cover.jpg/100x100bb.jpg',
             audioUrl: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/0f/c9/2c/0fc92c81-80a2-2309-8800-244c0c16922d/mzaf_16409890494436531980.plus.aac.p.m4a'
           });
         }
@@ -328,7 +329,7 @@ function Dashboard() {
           setSongInfo({
             title: 'Am I Bothering You?',
             artist: 'Reality Club',
-            cover: 'https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/bf/f4/1e/bff41e24-912b-31e2-b130-4e2b027d14d2/cover.jpg/300x300bb.jpg',
+            cover: 'https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/bf/f4/1e/bff41e24-912b-31e2-b130-4e2b027d14d2/cover.jpg/100x100bb.jpg',
             audioUrl: 'https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview116/v4/0f/c9/2c/0fc92c81-80a2-2309-8800-244c0c16922d/mzaf_16409890494436531980.plus.aac.p.m4a'
           });
         }
@@ -604,7 +605,7 @@ function Dashboard() {
     setSongInfo({
       title: track.trackName,
       artist: track.artistName,
-      cover: track.artworkUrl100 ? track.artworkUrl100.replace('100x100bb', '300x300bb') : 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=200&auto=format&fit=crop',
+      cover: track.artworkUrl100 ? track.artworkUrl100.replace('100x100bb', '300x300bb') : 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=80&auto=format&fit=crop',
       audioUrl: track.previewUrl
     });
 
@@ -1003,11 +1004,12 @@ function Dashboard() {
                   onClick={handlePlaySnippet}
                 >
                   {songInfo.cover && (
-                    <img 
+                    <Image 
                       src={songInfo.cover} 
                       alt="Album cover" 
                       width={56}
                       height={56}
+                      sizes="56px"
                       className={`h-full w-full object-cover transition-opacity duration-300 ${isPlaying ? 'opacity-60' : 'group-hover:opacity-60'}`}
                     />
                   )}
