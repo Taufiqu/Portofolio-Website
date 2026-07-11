@@ -1,0 +1,51 @@
+# Muhammad Hafizh Taufiqurrohman (Taufiqu)
+
+Muhammad Hafizh Taufiqurrohman (Taufiqu) is a Computer Science student at Universitas Lampung and a Software Engineer. He focuses on building scalable backend engines, server optimizations, and high-performance client-side web architectures.
+
+## Core Roles & Background
+- **Systems Architect & Full-Stack Engineer**: Specialized in full-stack JavaScript, PHP/Laravel, and secure real-time systems.
+- **Location**: Lampung, Indonesia (UTC+7 / GMT+7).
+- **Primary Contact**: taufiqu.dev@gmail.com
+
+---
+
+## Technical Stack
+
+- **Languages & Frameworks**:
+  - JavaScript / TypeScript
+  - React.js / Next.js
+  - Tailwind CSS
+  - PHP / Laravel
+- **Databases & Cloud**:
+  - PostgreSQL / Supabase
+  - Vercel Edge Networks
+  - Linux Server Management (Ubuntu, Nginx, Docker)
+
+---
+
+## Key Projects
+
+### 1. Dashboard Business Attrition
+- **Description**: Enterprise analytics dashboard analyzing employee attrition metrics.
+- **Features**: Interactive charts, filter parameters, and trend predictors.
+- **Link**: [Live Demo](https://taufiqu.dev#projects)
+
+### 2. GitLab Webhook CI/CD
+- **Description**: Automated continuous integration and deployment engine linked to git repositories.
+- **Features**: Docker compile logs, build notifications, and server state updates.
+- **Link**: [Live Demo](https://taufiqu.dev#projects)
+
+### 3. SIAKAD (Sistem Informasi Akademik)
+- **Description**: Academic administration and database engine for universities.
+- **Features**: Secure roles, grade calculation, and class scheduler.
+
+### 4. Apotek Sahabat
+- **Description**: POS (Point-of-Sale) management system for pharmacies.
+- **Features**: Real-time sales logging, inventory warnings, and automatic reporting.
+
+---
+
+## Online Profiles
+- **GitHub**: [Taufiqu](https://github.com/Taufiqu)
+- **LinkedIn**: [Muhammad Hafizh Taufiqurrohman](https://www.linkedin.com/in/muhammad-hafizh-taufiqurrohman-421121290/)
+- **Email**: [taufiqu.dev@gmail.com](mailto:taufiqu.dev@gmail.com)

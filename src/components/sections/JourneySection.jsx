@@ -72,7 +72,7 @@ function JourneySection() {
           const highlightedHtml = highlightJsonLine(line);
           return (
             <div key={idx} className="flex hover:bg-white/5 px-4 transition-colors duration-100 group">
-              <span className="w-8 text-right select-none text-white/20 pr-3 font-mono-code border-r border-white/5 group-hover:text-white/40">
+              <span className="w-8 text-right select-none text-white/35 pr-3 font-mono-code border-r border-white/5 group-hover:text-white/50">
                 {idx + 1}
               </span>
               <span 

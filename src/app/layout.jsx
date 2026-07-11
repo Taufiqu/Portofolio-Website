@@ -7,19 +7,19 @@ import ThemeWrapper from '../components/ui/ThemeWrapper';
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
-  display: 'swap',
+  display: 'optional',
 });
 
 const firaCode = Fira_Code({
   subsets: ['latin'],
   variable: '--font-fira-code',
-  display: 'swap',
+  display: 'optional',
 });
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
   variable: '--font-plus-jakarta-sans',
-  display: 'swap',
+  display: 'optional',
 });
 
 const baseUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL

@@ -112,7 +112,7 @@ function GuestbookSection() {
               rows={4}
               className="w-full rounded-xl bg-black/5 dark:bg-white/5 border border-[var(--color-outline)] px-4 py-3 text-sm text-[var(--color-text)] placeholder-slate-400 dark:placeholder-white/20 outline-none resize-none focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)]/30 transition"
             />
-            <div className="text-right text-[10px] font-mono-code text-[var(--color-text-muted)] opacity-50 mt-1">
+            <div className="text-right text-[10px] font-mono-code text-[var(--color-text-muted)] opacity-80 mt-1">
               {message.length}/200
             </div>
           </div>
@@ -159,7 +159,7 @@ function GuestbookSection() {
                 >
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-semibold text-[var(--color-text)]">{entry.name}</span>
-                    <span className="text-[11px] font-mono-code text-[var(--color-text-muted)] opacity-60">{date}</span>
+                    <span className="text-[11px] font-mono-code text-[var(--color-text-muted)] opacity-85">{date}</span>
                   </div>
                   <p className="text-sm text-[var(--color-text)] opacity-80 leading-relaxed break-words">{entry.message}</p>
                 </div>

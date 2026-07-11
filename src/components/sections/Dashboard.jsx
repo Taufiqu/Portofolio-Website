@@ -865,27 +865,27 @@ function Dashboard() {
                 <p className="text-[10px] font-mono-code uppercase tracking-wider text-[var(--color-text-muted)] mb-3">Loaded System Modules:</p>
                 <div className="flex flex-wrap gap-2">
                   <span className="inline-flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded text-xs text-[var(--color-text)] border border-[var(--color-outline)]">
-                    <SiReact className="text-sky-500" />
+                    <SiReact className="text-sky-500" aria-hidden="true" />
                     <span>React</span>
                   </span>
                   <span className="inline-flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded text-xs text-[var(--color-text)] border border-[var(--color-outline)]">
-                    <SiNextdotjs className="text-neutral-800 dark:text-white" />
+                    <SiNextdotjs className="text-neutral-800 dark:text-white" aria-hidden="true" />
                     <span>Next.js</span>
                   </span>
                   <span className="inline-flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded text-xs text-[var(--color-text)] border border-[var(--color-outline)]">
-                    <SiJavascript className="text-yellow-600 dark:text-yellow-400" />
+                    <SiJavascript className="text-yellow-600 dark:text-yellow-400" aria-hidden="true" />
                     <span>JS</span>
                   </span>
                   <span className="inline-flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded text-xs text-[var(--color-text)] border border-[var(--color-outline)]">
-                    <SiTailwindcss className="text-cyan-500" />
+                    <SiTailwindcss className="text-cyan-500" aria-hidden="true" />
                     <span>Tailwind</span>
                   </span>
                   <span className="inline-flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded text-xs text-[var(--color-text)] border border-[var(--color-outline)]">
-                    <SiSupabase className="text-emerald-600 dark:text-emerald-500" />
+                    <SiSupabase className="text-emerald-600 dark:text-emerald-500" aria-hidden="true" />
                     <span>Supabase</span>
                   </span>
                   <span className="inline-flex items-center gap-1 bg-black/5 dark:bg-white/5 px-2.5 py-1 rounded text-xs text-[var(--color-text)] border border-[var(--color-outline)]">
-                    <SiVercel className="text-neutral-800 dark:text-white" />
+                    <SiVercel className="text-neutral-800 dark:text-white" aria-hidden="true" />
                     <span>Vercel</span>
                   </span>
                 </div>
