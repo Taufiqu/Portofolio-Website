@@ -1,8 +1,9 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="CV of MUHAMMAD HAFIZH TAUFIQURROHMAN">
+  <meta name="description" content="CV MUHAMMAD HAFIZH TAUFIQURROHMAN">
   <title>MUHAMMAD HAFIZH TAUFIQURROHMAN - CV</title>
   <style>
     :root {
@@ -22,11 +23,51 @@
       background: #f3f4f6;
     }
 
+    /* Language switching */
+    html[lang="en"] .id-only {
+      display: none !important;
+    }
+    html[lang="id"] .en-only {
+      display: none !important;
+    }
+
     .toolbar {
       width: min(21cm, calc(100% - 32px));
       margin: 24px auto 12px;
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .lang-selector {
+      display: flex;
+      gap: 4px;
+      background: #e5e7eb;
+      padding: 4px;
+      border-radius: 8px;
+    }
+
+    .lang-button {
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #4b5563;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 12px;
+      transition: all 0.15s ease;
+    }
+
+    .lang-button:hover {
+      color: #111827;
+    }
+
+    .lang-button.active {
+      background: #ffffff;
+      color: #111827;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
     .print-button {
@@ -38,6 +79,11 @@
       font: inherit;
       font-weight: 700;
       padding: 9px 14px;
+      transition: background-color 0.15s ease;
+    }
+
+    .print-button:hover {
+      background: #374151;
     }
 
     .page {
@@ -177,10 +223,31 @@
       }
     }
   </style>
+  <script>
+    function setLanguage(lang) {
+      document.documentElement.lang = lang;
+      document.querySelectorAll('.lang-button').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+      });
+      localStorage.setItem('cv-lang', lang);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedLang = localStorage.getItem('cv-lang') || 'en';
+      setLanguage(savedLang);
+    });
+  </script>
 </head>
 <body>
   <div class="toolbar">
-    <button class="print-button" type="button" onclick="window.print()">Print</button>
+    <div class="lang-selector">
+      <button class="lang-button active" data-lang="en" onclick="setLanguage('en')">English</button>
+      <button class="lang-button" data-lang="id" onclick="setLanguage('id')">Bahasa Indonesia</button>
+    </div>
+    <button class="print-button" type="button" onclick="window.print()">
+      <span class="en-only">Print</span>
+      <span class="id-only">Cetak</span>
+    </button>
   </div>
 
   <main class="page">
@@ -198,47 +265,71 @@
         <span>|</span>
         <a href="https://github.com/Taufiqu">github.com/Taufiqu</a>
         <span>|</span>
-        <span>Portfolio (Coming Soon)</span>
+        <a href="https://taufiqu.vercel.app">taufiqu.vercel.app</a>
       </div>
     </header>
 
     <section>
-      <h2>Professional Summary</h2>
-      <p>Final-year Computer Science Student with hands-on experience developing production-ready web applications using React, Laravel, and modern frontend technologies. Currently contributing as a Frontend Developer for E-ULT Saidata, a configurable digital platform that supports administrative service digitalization at the University of Lampung. Interested in frontend architecture, reusable component design, and building scalable web applications with a strong focus on maintainability and user experience.</p>
+      <h2 class="en-only">Professional Summary</h2>
+      <h2 class="id-only">Profil Singkat</h2>
+      <p class="en-only">Final-year Computer Science Student with hands-on experience developing production-ready web applications using React, Laravel, and modern frontend technologies. Currently contributing as a Frontend Developer for E-ULT Saidata, a configurable digital platform that supports administrative service digitalization at the University of Lampung. Interested in frontend architecture, reusable component design, and building scalable web applications with a strong focus on maintainability and user experience.</p>
+      <p class="id-only">Mahasiswa tingkat akhir Program Studi Ilmu Komputer yang memiliki pengalaman dalam mengembangkan aplikasi web siap produksi menggunakan React, Laravel, serta berbagai teknologi frontend modern. Saat ini berkontribusi sebagai Frontend Developer pada E-ULT Saidata, sebuah platform digital yang mendukung digitalisasi layanan administrasi di Universitas Lampung. Memiliki ketertarikan pada frontend architecture, pengembangan reusable component, serta pembangunan aplikasi web yang scalable dengan fokus pada maintainability dan user experience.</p>
     </section>
 
     <section>
-      <h2>Technical Skills</h2>
+      <h2 class="en-only">Technical Skills</h2>
+      <h2 class="id-only">Keahlian Teknis</h2>
       <div class="skills">
-        <strong>Languages</strong>
+        <strong class="en-only">Languages</strong>
+        <strong class="id-only">Bahasa Pemrograman</strong>
         <span>JavaScript, TypeScript, PHP, Python, Java</span>
+        
         <strong>Frontend</strong>
         <span>React.js, Next.js, HTML5, CSS3, Tailwind CSS, Bootstrap</span>
+        
         <strong>Backend</strong>
         <span>Laravel, Node.js, Django, Flask</span>
+        
         <strong>Database</strong>
         <span>PostgreSQL, MySQL, MongoDB, Firebase, Supabase</span>
+        
         <strong>Tools</strong>
         <span>Git, GitHub, Docker, Postman, Figma, Vercel, Linux, VS Code</span>
-        </div>
+      </div>
     </section>
 
     <section>
-      <h2>Projects</h2>
+      <h2 class="en-only">Projects</h2>
+      <h2 class="id-only">Proyek</h2>
       <article class="project">
         <h3>E-ULT Saidata</h3>
-        <p class="meta">Frontend Developer | 2025 - Present | Laravel, React.js, PostgreSQL</p>
-        <p>Digital platform developed to support administrative service digitalization at the University of Lampung through a configurable form builder that can be reused across multiple departments.</p>
-        <p class="subheading">Responsibilities</p>
-        <ul>
+        <p class="meta en-only">Frontend Developer | 2025 - Present | Laravel, React.js, PostgreSQL</p>
+        <p class="meta id-only">Frontend Developer | 2025 – Sekarang | Laravel, React.js, PostgreSQL</p>
+        
+        <p class="en-only">Digital platform developed to support administrative service digitalization at the University of Lampung through a configurable form builder that can be reused across multiple departments.</p>
+        <p class="id-only">Platform digital yang dikembangkan untuk mendukung digitalisasi layanan administrasi di Universitas Lampung melalui configurable form builder yang dapat digunakan kembali oleh berbagai unit di lingkungan universitas.</p>
+        
+        <p class="subheading en-only">Responsibilities</p>
+        <p class="subheading id-only">Tanggung Jawab</p>
+        <ul class="en-only">
           <li>Developed responsive frontend interfaces using React.js.</li>
           <li>Built configurable UI components for dynamic form generation.</li>
           <li>Collaborated with backend developers to integrate REST APIs.</li>
           <li>Participated in designing reusable frontend architecture.</li>
           <li>Contributed to improving maintainability for future system expansion.</li>
         </ul>
-        <p class="subheading">Key Achievement</p>
-        <p>Designed a reusable frontend structure that allows multiple university units to use the same application without rewriting frontend components.</p>
+        <ul class="id-only">
+          <li>Mengembangkan antarmuka frontend yang responsif menggunakan React.js.</li>
+          <li>Membangun komponen UI yang dapat dikonfigurasi untuk menghasilkan formulir dinamis.</li>
+          <li>Berkolaborasi dengan backend developer dalam mengintegrasikan REST API.</li>
+          <li>Berpartisipasi dalam perancangan arsitektur frontend yang reusable.</li>
+          <li>Berkontribusi dalam meningkatkan maintainability sistem untuk mendukung pengembangan di masa mendatang.</li>
+        </ul>
+        
+        <p class="subheading en-only">Key Achievement</p>
+        <p class="subheading id-only">Pencapaian Utama</p>
+        <p class="en-only">Designed a reusable frontend structure that allows multiple university units to use the same application without rewriting frontend components.</p>
+        <p class="id-only">Merancang struktur frontend yang reusable sehingga berbagai unit di lingkungan universitas dapat menggunakan aplikasi yang sama tanpa perlu membangun ulang komponen frontend.</p>
       </article>
 
       <!-- <article class="project">
@@ -271,55 +362,80 @@
     </section>
 
     <section>
-      <h2>Organization</h2>
+      <h2 class="en-only">Organization</h2>
+      <h2 class="id-only">Organisasi</h2>
       <article class="entry">
         <h3>HIMAKOM</h3>
-        <p class="meta">Secretary Division Staff | 2024</p>
-        <ul>
+        <p class="meta en-only">Secretary Division Staff | 2024</p>
+        <p class="meta id-only">Staf Divisi Kesekretariatan | 2024</p>
+        <ul class="en-only">
           <li>Assisted administrative activities.</li>
           <li>Managed organizational documents.</li>
           <li>Collaborated with committee members during events.</li>
+        </ul>
+        <ul class="id-only">
+          <li>Membantu pelaksanaan kegiatan administrasi organisasi.</li>
+          <li>Mengelola dokumen organisasi.</li>
+          <li>Berkolaborasi dengan anggota kepanitiaan dalam pelaksanaan berbagai kegiatan.</li>
         </ul>
       </article>
     </section>
 
     <section>
-      <h2>Education</h2>
+      <h2 class="en-only">Education</h2>
+      <h2 class="id-only">Pendidikan</h2>
       <div class="education-grid">
-        <strong>University</strong>
-        <span>University of Lampung</span>
-        <strong>Degree</strong>
-        <span>Bachelor of Computer Science</span>
-        <strong>Expected Graduation</strong>
-        <span>August 2026</span>
-        <strong>GPA</strong>
+        <strong class="en-only">University</strong>
+        <strong class="id-only">Universitas</strong>
+        <span class="en-only">University of Lampung</span>
+        <span class="id-only">Universitas Lampung</span>
+        
+        <strong class="en-only">Degree</strong>
+        <strong class="id-only">Program Studi</strong>
+        <span class="en-only">Bachelor of Computer Science</span>
+        <span class="id-only">S1 Ilmu Komputer</span>
+        
+        <strong class="en-only">Expected Graduation</strong>
+        <strong class="id-only">Perkiraan Lulus</strong>
+        <span class="en-only">August 2026</span>
+        <span class="id-only">Agustus 2026</span>
+        
+        <strong class="en-only">GPA</strong>
+        <strong class="id-only">IPK</strong>
         <span>3.62 / 4.00</span>
       </div>
     </section>
 
     <section>
-      <h2>Certifications</h2>
+      <h2 class="en-only">Certifications</h2>
+      <h2 class="id-only">Sertifikasi</h2>
       <article class="entry">
         <h3>Hackathon Mengembangkan Solusi AI</h3>
         <p class="meta">Fresh Graduate Academy Digital Talent Scholarship 2025</p>
-        <p>Issued by Pusat Pengembangan Talenta Digital</p>
-        <p>May 2025 - June 2025</p>
+        <p class="en-only">Issued by Pusat Pengembangan Talenta Digital</p>
+        <p class="id-only">Diterbitkan oleh Pusat Pengembangan Talenta Digital</p>
+        <p class="en-only">May 2025 - June 2025</p>
+        <p class="id-only">Mei 2025 – Juni 2025</p>
       </article>
     </section>
 
     <section>
-      <h2>Languages</h2>
+      <h2 class="en-only">Languages</h2>
+      <h2 class="id-only">Kemampuan Bahasa</h2>
       <div class="skills">
         <strong>Bahasa Indonesia</strong>
         <span>Native</span>
-        <strong>English</strong>
+        
+        <strong class="en-only">English</strong>
+        <strong class="id-only">Bahasa Inggris</strong>
         <span>Intermediate</span>
       </div>
     </section>
 
     <section>
-      <h2>Soft Skills</h2>
-      <p>Problem Solving, Analytical Thinking, Time Management, Team Collaboration, Adaptability, Continuous Learning</p>
+      <h2 class="en-only">Soft Skills</h2>
+      <h2 class="id-only">Keterampilan Interpersonal</h2>
+      <p>Pemecahan Masalah, Berpikir Analitis, Manajemen Waktu, Kolaborasi Tim, Adaptabilitas, Kemauan untuk Terus Belajar</p>
     </section>
   </main>
 </body>
