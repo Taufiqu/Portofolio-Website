@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState('dev'); // 'dev' | 'pro'
+  const [theme, setTheme] = useState('pro'); // 'dev' | 'pro'
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [transitionDirection, setTransitionDirection] = useState(null); // 'dev-to-pro' | 'pro-to-dev'
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -23,8 +23,10 @@ export function ThemeProvider({ children }) {
         document.documentElement.classList.remove('dark');
       }
     } else {
-      // Default is dev (dark theme)
-      document.documentElement.classList.add('dark');
+      // Default is pro (light professional theme)
+      document.documentElement.removeAttribute('data-theme');
+      document.documentElement.setAttribute('data-theme', 'pro');
+      document.documentElement.classList.remove('dark');
     }
   }, []);
 
@@ -59,12 +61,14 @@ export function ThemeProvider({ children }) {
   }, []);
 
   const onTransitionComplete = useCallback(() => {
-    const target = theme === 'dev' ? 'pro' : 'dev';
+    // Use pendingTheme as source of truth — avoids stale closure on fast transitions
+    const target = pendingTheme;
+    if (!target) return;
     applyTheme(target);
     setIsTransitioning(false);
     setTransitionDirection(null);
     setPendingTheme(null);
-  }, [theme, applyTheme]);
+  }, [pendingTheme, applyTheme]);
 
   return (
     <ThemeContext.Provider value={{ 
