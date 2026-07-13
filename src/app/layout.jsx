@@ -68,7 +68,7 @@ export default function RootLayout({ children }) {
         {/* Anti-flash: apply saved theme before first paint */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('portfolio-theme')||'dev';document.documentElement.setAttribute('data-theme',t);if(t==='dev')document.documentElement.classList.add('dark');else document.documentElement.classList.remove('dark');}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('portfolio-theme')||'pro';document.documentElement.setAttribute('data-theme',t);if(t==='dev')document.documentElement.classList.add('dark');else document.documentElement.classList.remove('dark');}catch(e){}})();`,
           }}
         />
       </head>

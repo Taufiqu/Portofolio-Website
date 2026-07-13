@@ -1225,13 +1225,13 @@ function Dashboard() {
 
         {/* Copy notification popup */}
         <div 
-          className={`fixed bottom-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-xl border border-[var(--color-primary)]/30 bg-[#161F30]/95 px-6 py-3.5 text-xs font-mono-code text-white shadow-[0_10px_30px_rgba(0,242,254,0.15)] backdrop-blur-md transition-all duration-500 ${
+          className={`fixed bottom-10 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded-xl border border-[var(--color-primary)]/30 bg-[var(--color-card-bg)] px-6 py-3.5 text-xs font-mono-code text-[var(--color-text)] shadow-[0_10px_30px_rgba(0,0,0,0.12)] backdrop-blur-md transition-all duration-500 ${
             showCopyToast 
               ? 'translate-y-0 opacity-100' 
               : 'translate-y-10 opacity-0 pointer-events-none'
           }`}
         >
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-primary)] text-[#0B0F17] font-bold text-[10px]">
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-primary)] text-[var(--color-card-bg)] font-bold text-[10px]">
             ✓
           </span>
           SYS_MSG: Email copied to clipboard!
