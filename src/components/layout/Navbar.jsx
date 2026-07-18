@@ -15,6 +15,7 @@ const NAV_ITEMS = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('overview');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,6 +23,33 @@ export default function Navbar() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const sections = ['overview', 'work', 'notebook', 'observations', 'contact'];
+    
+    const observerCallback = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    };
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '-40% 0px -40% 0px',
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    sections.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -44,16 +72,22 @@ export default function Navbar() {
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
           <ul className="flex items-center gap-6">
-            {NAV_ITEMS.map((item) => (
-              <li key={item.label}>
-                <Link
-                  href={item.href}
-                  className="text-xs font-medium text-[#A1A1AA] hover:text-[#FAFAFA] interactive-transition"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
+            {NAV_ITEMS.map((item) => {
+              const targetId = item.href.replace('/#', '');
+              const isActive = activeSection === targetId;
+              return (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    className={`text-xs font-medium interactive-transition ${
+                      isActive ? 'text-[#FAFAFA]' : 'text-[#A1A1AA] hover:text-[#FAFAFA]'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
 
@@ -70,17 +104,23 @@ export default function Navbar() {
         {isOpen && (
           <div className="absolute top-[calc(100%+12px)] left-6 right-6 z-40 rounded-lg border border-[#27272A] bg-[#18181B]/95 backdrop-blur-lg p-6 shadow-2xl md:hidden flex flex-col gap-4">
             <ul className="flex flex-col gap-3 text-sm">
-              {NAV_ITEMS.map((item) => (
-                <li key={item.label} className="border-b border-[#27272A] last:border-b-0 pb-2 last:pb-0">
-                  <Link
-                    href={item.href}
-                    onClick={() => setIsOpen(false)}
-                    className="block text-xs font-medium text-[#A1A1AA] hover:text-[#FAFAFA] interactive-transition"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
+              {NAV_ITEMS.map((item) => {
+                const targetId = item.href.replace('/#', '');
+                const isActive = activeSection === targetId;
+                return (
+                  <li key={item.label} className="border-b border-[#27272A] last:border-b-0 pb-2 last:pb-0">
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className={`block text-xs font-medium interactive-transition ${
+                        isActive ? 'text-[#FAFAFA]' : 'text-[#A1A1AA] hover:text-[#FAFAFA]'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}

@@ -1,4 +1,4 @@
-// Real projects data for Muhammad Hafizh
+// Real projects data for Taufiqu
 // Each project represents actual work and provides case-study details
 
 import project1 from '../assets/projects/1.webp';
@@ -12,11 +12,11 @@ export const PROJECTS_DATA = [
     title: "E-ULT Saidata",
     year: "2025 - Present",
     role: "Frontend Developer",
-    image: project1, // Fallback/Reference
+    image: project1,
     tech: ["React.js", "Laravel", "PostgreSQL", "Tailwind CSS"],
     demoLink: "",
     githubLink: "",
-    summary: "Configurable form builder engine for administrational digitisation in Universitas Lampung, enabling reuse of modular frontend interfaces.",
+    summary: "The challenge was creating a configurable administrative form builder that allows university departments to deploy custom application flows without requiring frontend code rebuilding or redeployment.",
     problem: "Different university units required unique administrative forms. Building individual frontend views for every department resulted in massive codebase bloat, redundant code, and long deployment cycles.",
     context: "Developed as a digital transformation initiative for the Universitas Lampung administration, serving multiple departments and thousands of active users.",
     constraints: "Must integrate with a Laravel backend API, load schemas dynamically, and ensure forms maintain complete accessibility and validate complex input patterns at runtime.",
@@ -34,7 +34,7 @@ export const PROJECTS_DATA = [
     tech: ["React.js", "Node.js", "Express", "Chart.js"],
     demoLink: "https://dashboard-business-attrition.vercel.app/",
     githubLink: "https://github.com/Taufiqu/Dashboard_Business_Attrition_Vercel",
-    summary: "Interactive predictive analytics dashboard visualizing employee and business attrition trends.",
+    summary: "The challenge was shifting high-dimensional statistical calculations from the client browser thread to a dedicated backend service to eliminate UI lag on lower-end mobile devices.",
     problem: "HR managers struggled to identify attrition risks early because raw telemetry data was distributed across legacy spreadsheets with no real-time analysis.",
     context: "Built to provide companies with visual insights into employee retention, sorting complex variables such as age, satisfaction, and work-life balance.",
     constraints: "The application had to run entirely on serverless edge runtimes, meaning data loading and charting operations had to be highly optimized to avoid rendering lag on mobile clients.",
@@ -52,7 +52,7 @@ export const PROJECTS_DATA = [
     tech: ["React.js", "Python", "Flask", "Scikit-Learn"],
     demoLink: "https://mental-diagnose.vercel.app/",
     githubLink: "https://github.com/Taufiqu/Sistem-Pakar-Diagnosa-Kesehatan-Mental",
-    summary: "A web application that uses machine learning to predict mental health issues based on PHQ-9, PSS-10 and GAD-7 questionnaires.",
+    summary: "The challenge was establishing validation and parameter sanitization bounds on classification inputs at the API gateway layer to prevent NumPy inference thread crashes inside Python services.",
     problem: "Standard clinical questionnaires are often evaluated manually, leading to delay in preliminary guidance for depression, stress, and anxiety symptoms.",
     context: "Created as an academic project to bridge the gap between preliminary screening and accessible digital self-assessment toolsets.",
     constraints: "High accuracy threshold was required. The system needed to securely process user responses and run inferencing locally/serverless within milliseconds.",
@@ -70,7 +70,7 @@ export const PROJECTS_DATA = [
     tech: ["React.js", "Python", "Flask", "Scikit-Learn"],
     demoLink: "https://dashboard-cardiovascular-predict.vercel.app/",
     githubLink: "https://github.com/Taufiqu/Dashboard_Cardiovascular_Predict",
-    summary: "A web application that uses machine learning to predict cardiovascular disease risk based on clinical health parameters.",
+    summary: "The challenge was designing a real-time parameters tuning layout that displays model predictions without overwhelming the user interface with diagnostic clutter.",
     problem: "Health screening tools rarely show how individual health metrics (like blood pressure and cholesterol) influence predictive models.",
     context: "Designed to help users understand cardiovascular risk factors by exploring model inputs interactively.",
     constraints: "Needed a layout that cleanly balances user input forms with complex chart indicators on a single screen without overloading the user.",
@@ -88,7 +88,7 @@ export const PROJECTS_DATA = [
     tech: ["React.js", "Tailwind CSS"],
     demoLink: "https://www.kultsum.com/",
     githubLink: "https://github.com/Taufiqu/waroeng-bebek-ngarasan",
-    summary: "A customized web interface for a restaurant brand, optimized for performance and responsiveness.",
+    summary: "The challenge was optimizing media assets and rendering footprints to achieve near-instant static load times on unstable 3G networks in regional locations.",
     problem: "Local restaurant businesses often have websites that load slowly on mobile devices over poor cell networks, leading to loss of potential customers.",
     context: "A commercial brand redesign focusing on lightning-fast speed and clear layout structure for visual restaurant menu displays.",
     constraints: "Must load instantly on weak 3G networks and require minimal maintenance from the restaurant owner.",

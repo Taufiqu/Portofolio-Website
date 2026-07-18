@@ -3,9 +3,30 @@
 import React from 'react';
 
 const PHOTOS = [
-  { id: 1, src: '/photography/1.jpg', alt: 'Architectural concrete geometry and parallel lines', ratio: 'aspect-[3/2]' },
-  { id: 2, src: '/photography/2.jpg', alt: 'Concrete stairs with diagonal shadows', ratio: 'aspect-[2/3]' },
-  { id: 3, src: '/photography/3.jpg', alt: 'Grid alignment facade detail', ratio: 'aspect-[3/2]' }
+  { 
+    id: 1, 
+    src: '/photography/1.jpg', 
+    alt: 'Architectural concrete geometry and parallel lines', 
+    ratio: 'aspect-[3/2]',
+    location: 'Lampung, Indonesia',
+    observation: 'Industrial structure'
+  },
+  { 
+    id: 2, 
+    src: '/photography/2.jpg', 
+    alt: 'Concrete stairs with diagonal shadows', 
+    ratio: 'aspect-[2/3]',
+    location: 'Lampung, Indonesia',
+    observation: 'Diagonal shadow cutting'
+  },
+  { 
+    id: 3, 
+    src: '/photography/3.jpg', 
+    alt: 'Grid alignment facade detail', 
+    ratio: 'aspect-[3/2]',
+    location: 'Lampung, Indonesia',
+    observation: 'Geometric alignment'
+  }
 ];
 
 export default function PerspectiveSection() {
@@ -25,7 +46,7 @@ export default function PerspectiveSection() {
         <div className="flex flex-col gap-8 items-start w-full">
           <div className="max-w-[640px]">
             <p className="text-editorial">
-              A quiet log of light, composition, and alignment. How I observe detail in physical spaces.
+              A quiet collection of photographs showing observation of light, geometry, and composition.
             </p>
           </div>
 
@@ -40,9 +61,10 @@ export default function PerspectiveSection() {
                     loading="lazy"
                   />
                 </div>
-                <span className="font-mono text-[10px] text-zinc-500 uppercase tracking-wider">
-                  Frame // 0{photo.id}
-                </span>
+                <div className="flex flex-col gap-0.5 mt-1 font-mono text-[9px] text-zinc-500 uppercase tracking-widest select-none">
+                  <span className="text-[#FAFAFA] font-medium">{photo.observation}</span>
+                  <span>{photo.location}</span>
+                </div>
               </div>
             ))}
           </div>

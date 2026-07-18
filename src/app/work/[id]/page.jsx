@@ -10,9 +10,209 @@ export async function generateStaticParams() {
   }));
 }
 
+const PROJECT_DETAILS = {
+  "e-ult-saidata": {
+    diagram: `
++------------------------------------+
+|   PostgreSQL Database              |
+|   (Form Config JSON Schema)        |
++------------------------------------+
+                 |
+                 v [REST API Fetch]
++------------------------------------+
+|   Laravel Backend Endpoint         |
+|   (Authentication & Schema Auth)   |
++------------------------------------+
+                 |
+                 v [Dynamic JSON Payload]
++------------------------------------+
+|   React Dynamic UI Engine          |
+|   (Context & Schema Parser)        |
++------------------------------------+
+                 |
+                 v [Atomic Component Resolution]
++------------------------------------+
+|   Static Form Fields               |
+|   (TextInput, Checkbox, Select)    |
++------------------------------------+
+`,
+    code: `// Resolving dynamic atomic components from JSON schema inputs
+const ATOMIC_FIELDS = {
+  text: TextInput,
+  select: SelectDropdown,
+  checkbox: CheckboxInput,
+  textarea: TextAreaInput,
+};
+
+export default function SchemaRenderer({ field, register, errors }) {
+  const Component = ATOMIC_FIELDS[field.type];
+  
+  // Graceful fallback to avoid application rendering thread crashes
+  if (!Component) {
+    console.warn(\`Unsupported field type: \${field.type}\`);
+    return null;
+  }
+  
+  return (
+    <Component 
+      field={field} 
+      register={register} 
+      errors={errors} 
+    />
+  );
+}`,
+    codeExplanation: "By mapping schema keys directly to decoupled atomic components, we eliminate nested conditionals. Adding new input types only requires extending the mapping object, leaving existing form handlers untouched."
+  },
+  "business-attrition": {
+    diagram: `
++----------------------------+
+|   Raw Telemetry Datasets   |
++----------------------------+
+              |
+              v [Raw Stream]
++----------------------------+
+|   Express API Controller   |
+|   (Memory Map Aggregator)  |
++----------------------------+
+              |
+              v [Filtered JSON Data]
++----------------------------+
+|   React Dashboard Thread   |
+|   (Pure State UI)          |
++----------------------------+
+              |
+              v [No-block Rendering]
++----------------------------+
+|   Chart.js / Canvas Views  |
++----------------------------+
+`,
+    code: `// Offloading statistical mapping computations to Node.js backend
+app.get('/api/analytics/attrition-summary', async (req, res) => {
+  const rawData = await db.fetchRawTelemetry();
+  
+  // Aggregate in-memory to prevent slow O(N) recalculations on the client
+  const departmentAggregates = rawData.reduce((acc, row) => {
+    acc[row.dept] = (acc[row.dept] || 0) + (row.left ? 1 : 0);
+    return acc;
+  }, {});
+  
+  res.json({
+    timestamp: Date.now(),
+    data: departmentAggregates
+  });
+});`,
+    codeExplanation: "Shifting computational operations away from the browser context prevents freezing the client UI rendering thread during massive dataset sweeps."
+  },
+  "mental-health-predict": {
+    diagram: `
++------------------------------------+
+|   React Questionnaire Components   |
+|   (State Collection PHQ-9)         |
++------------------------------------+
+                 |
+                 v [Sanitized Payload]
++------------------------------------+
+|   Flask Endpoint (Validation Gate)  |
+|   (Strict Bounds Verification)     |
++------------------------------------+
+                 |
+                 v [NumPy Reshaping Path]
++------------------------------------+
+|   Scikit-Learn Predictor Thread    |
+|   (Model Classifier Run)           |
++------------------------------------+
+`,
+    code: `# Enforcing strict data bounds at Flask gateway before inference runs
+@app.route('/predict', methods=['POST'])
+def predict_score():
+    data = request.json
+    
+    # Enforce constraints strictly: PHQ-9 parameters must fit [0, 3]
+    for metric in ['phq9', 'pss10', 'gad7']:
+        score = data.get(metric)
+        if not isinstance(score, int) or not (0 <= score <= 3):
+            return jsonify({'status': 'invalid_payload_bounds'}), 400
+            
+    # Safe to convert and shape into inference array
+    model_input = np.array([data['phq9'], data['pss10'], data['gad7']]).reshape(1, -1)
+    prediction = model.predict(model_input)
+    return jsonify({'result': int(prediction[0])})`,
+    codeExplanation: "Validating input ranges defensively prevents Numpy reshape functions from throwing exceptions, insulating the Flask inference thread from crash inputs."
+  },
+  "cardiovascular-disease-predict": {
+    diagram: `
++------------------------------------+
+|   User Param Form Inputs           |
++------------------------------------+
+                 |
+                 v [Fast state onChange hook]
++------------------------------------+
+|   React Parameter Hooks            |
+|   (Consolidated Inputs)            |
++------------------------------------+
+                 |
+                 v [Inference Request]
++------------------------------------+
+|   Flask Model inference            |
+|   (Sub-5ms Inference Returns)      |
++------------------------------------+
+`,
+    code: `// Custom React Hook to batch parameter updates and prevent re-render thrashing
+export function useParamState(initialValues) {
+  const [params, setParams] = useState(initialValues);
+  
+  const updateParam = useCallback((key, value) => {
+    setParams(prev => {
+      // Trigger update only when values actually change
+      if (prev[key] === value) return prev;
+      return { ...prev, [key]: value };
+    });
+  }, []);
+  
+  return [params, updateParam];
+}`,
+    codeExplanation: "Batching component state updates prevents browser layout calculation thrashing, enabling responsive chart rendering during parameter adjustments."
+  },
+  "waroeng-bebek-ngarasan": {
+    diagram: `
++-----------------------------------+
+|   Static Web Assets / Text JSON   |
++-----------------------------------+
+                 |
+                 v [Pre-compile Compile step]
++-----------------------------------+
+|   React Static Generation (SSG)   |
++-----------------------------------+
+                 |
+                 v [Single bundle output]
++-----------------------------------+
+|   Global CDN Edge Distribution    |
++-----------------------------------+
+`,
+    code: `// Using static layout mapping without client database lookups
+export const MENU_ITEMS = [
+  { id: 'duck_special', name: 'Bebek Ngarasan', price: 42000, category: 'main' },
+  { id: 'iced_tea', name: 'Es Teh Manis', price: 5000, category: 'beverage' }
+];
+
+export default function MenuList() {
+  // Pre-compiled map yields zero dynamic layout recalculation lags
+  return (
+    <div className="grid grid-cols-1 gap-4">
+      {MENU_ITEMS.map(item => (
+        <MenuRow key={item.id} item={item} />
+      ))}
+    </div>
+  );
+}`,
+    codeExplanation: "Compiling variables as static objects at build time saves bundle footprints, giving faster first-contentful-paint speeds on slow devices."
+  }
+};
+
 export default async function ProjectCaseStudy({ params }) {
   const { id } = await params;
   const project = PROJECTS_DATA.find((p) => p.id === id);
+  const details = PROJECT_DETAILS[id];
 
   if (!project) {
     return (
@@ -137,27 +337,47 @@ export default async function ProjectCaseStudy({ params }) {
                 </p>
               </div>
 
-              {/* Constraints */}
-              <div className="flex flex-col gap-3 w-full border-t border-[#27272A] pt-6">
-                <h2 className="font-geist text-lg font-bold text-[#FAFAFA] tracking-tight">Constraints</h2>
-                <p className="font-inter text-sm leading-relaxed text-[#A1A1AA] max-w-[640px]">
-                  {project.constraints}
-                </p>
-              </div>
+              {/* Structured Constraint Callout Box */}
+              {project.constraints && (
+                <div className="w-full border border-[#27272A] bg-[#18181B] p-8 rounded-sm max-w-[640px] my-4 select-none">
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-[#2563EB] block mb-3 font-semibold">
+                    System Constraint
+                  </span>
+                  <p className="font-inter text-sm leading-relaxed text-[#FAFAFA] font-light">
+                    {project.constraints}
+                  </p>
+                </div>
+              )}
 
-              {/* Approach & Architecture */}
+              {/* Approach & Architecture with Diagram */}
               <div className="flex flex-col gap-3 w-full border-t border-[#27272A] pt-6">
                 <h2 className="font-geist text-lg font-bold text-[#FAFAFA] tracking-tight">Approach & Architecture</h2>
                 <p className="font-inter text-sm leading-relaxed text-[#A1A1AA] max-w-[640px] mb-4">
                   {project.approach}
                 </p>
-                <div className="bg-[#18181B] border border-[#27272A] p-5 rounded-sm w-full max-w-[640px]">
-                  <span className="font-mono text-[9px] uppercase tracking-wider text-zinc-500 block mb-2">SYSTEM_ARCH_DESCRIPTOR // SPEC</span>
-                  <p className="font-inter text-xs leading-relaxed text-zinc-400">
-                    {project.architecture}
-                  </p>
-                </div>
+                
+                {/* Monochrome architecture diagram */}
+                {details?.diagram && (
+                  <div className="bg-[#18181B] border border-[#27272A] p-6 rounded-sm w-full max-w-[640px] font-mono text-[10px] overflow-x-auto text-zinc-400 select-none leading-normal">
+                    <span className="font-mono text-[9px] uppercase tracking-wider text-zinc-500 block mb-4">SYSTEM_ARCHITECTURE_MAP // MONOCHROME</span>
+                    <pre><code>{details.diagram}</code></pre>
+                  </div>
+                )}
               </div>
+
+              {/* Implementation Examples with Annotated Code Snippets */}
+              {details?.code && (
+                <div className="flex flex-col gap-3 w-full border-t border-[#27272A] pt-6">
+                  <h2 className="font-geist text-lg font-bold text-[#FAFAFA] tracking-tight">Implementation</h2>
+                  <p className="font-inter text-sm leading-relaxed text-[#A1A1AA] max-w-[640px] mb-4">
+                    {details.codeExplanation}
+                  </p>
+                  <div className="bg-[#18181B] border border-[#27272A] p-5 rounded-sm w-full max-w-[640px] font-mono text-xs overflow-x-auto text-zinc-300">
+                    <span className="font-mono text-[9px] uppercase tracking-wider text-zinc-500 block mb-3">ANNOTATED_CODE_SNIPPET</span>
+                    <pre><code>{details.code}</code></pre>
+                  </div>
+                </div>
+              )}
 
               {/* Outcome */}
               <div className="flex flex-col gap-3 w-full border-t border-[#27272A] pt-6">
