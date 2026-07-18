@@ -172,7 +172,7 @@ export default function ContactSection() {
             Designed for longevity.
           </span>
           <span className="font-mono text-[10px] text-zinc-500">
-            Muhammad Hafizh © 2026.
+            Taufiqu © 2026.
           </span>
         </div>
       </div>

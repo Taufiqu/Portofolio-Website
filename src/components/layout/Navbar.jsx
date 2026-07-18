@@ -38,7 +38,7 @@ export default function Navbar() {
           href="/"
           className="text-xs font-semibold tracking-[0.2em] text-[#FAFAFA] uppercase hover:opacity-80 interactive-transition"
         >
-          Muhammad Hafizh
+          Taufiqu - Portofolio
         </Link>
 
         {/* Desktop Navigation */}

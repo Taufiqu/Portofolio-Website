@@ -57,7 +57,7 @@ export default async function ProjectCaseStudy({ params }) {
 
           {/* Case Study Story (Asymmetric Grid) */}
           <div className="asymmetric-grid">
-            {/* Left Column: Metadata Panel */}
+            {/* Left Column: Metadata & Action Links Panel */}
             <div className="flex flex-col gap-6 md:border-r md:border-[#27272A] md:pr-8 h-full">
               <div className="flex flex-col gap-1">
                 <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-500">Role</span>
@@ -77,22 +77,48 @@ export default async function ProjectCaseStudy({ params }) {
                   ))}
                 </div>
               </div>
-              {project.githubLink && (
-                <div className="flex flex-col gap-1 pt-4">
-                  <a 
-                    href={project.githubLink}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#2563EB] hover:opacity-80 interactive-transition"
-                  >
-                    View Repository →
-                  </a>
+
+              {/* Core CTA Action Buttons */}
+              {(project.demoLink || project.githubLink) && (
+                <div className="flex flex-col gap-3 pt-6 border-t border-[#27272A] w-full">
+                  {project.demoLink && (
+                    <a 
+                      href={project.demoLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full flex items-center justify-center gap-2 border border-[#2563EB] bg-[#2563EB]/10 text-xs font-semibold uppercase tracking-wider text-[#FAFAFA] hover:bg-[#2563EB] py-3 rounded-sm interactive-transition select-none text-center cursor-pointer"
+                    >
+                      Live Application
+                    </a>
+                  )}
+                  {project.githubLink && (
+                    <a 
+                      href={project.githubLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full flex items-center justify-center gap-2 border border-zinc-800 bg-[#18181B] text-xs font-semibold uppercase tracking-wider text-[#FAFAFA] hover:border-zinc-700 py-3 rounded-sm interactive-transition select-none text-center cursor-pointer"
+                    >
+                      Source Code
+                    </a>
+                  )}
                 </div>
               )}
             </div>
 
-            {/* Right Column: Case Study Narrative */}
+            {/* Right Column: Case Study Screenshot & Narrative */}
             <div className="flex flex-col gap-12 items-start w-full">
+              {/* Project Image Showcase */}
+              {project.image && (
+                <div className="w-full overflow-hidden border border-[#27272A] bg-[#18181B] rounded-sm aspect-[16/9] select-none">
+                  <img 
+                    src={project.image.src || project.image} 
+                    alt={project.title} 
+                    className="w-full h-full object-cover grayscale opacity-80 hover:grayscale-0 interactive-transition duration-500"
+                    loading="eager"
+                  />
+                </div>
+              )}
+
               {/* Context */}
               {project.context && (
                 <div className="flex flex-col gap-3 w-full">
@@ -158,7 +184,7 @@ export default async function ProjectCaseStudy({ params }) {
             Designed for longevity.
           </span>
           <span className="font-mono text-[10px] text-zinc-500">
-            Muhammad Hafizh © 2026.
+            Taufiqu © 2026.
           </span>
         </div>
       </main>

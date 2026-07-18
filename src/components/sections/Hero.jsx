@@ -20,7 +20,7 @@ export default function Hero() {
         <div className="flex flex-col gap-6 md:gap-8 items-start">
           <div className="flex flex-col gap-2">
             <h1 className="font-geist text-4xl sm:text-6xl font-extrabold tracking-tighter text-[#FAFAFA] leading-none">
-              Muhammad Hafizh
+              Taufiqu
             </h1>
             <p className="font-geist text-lg sm:text-xl text-[#FAFAFA] font-light tracking-tight">
               Software Engineer

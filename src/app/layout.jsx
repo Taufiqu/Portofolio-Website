@@ -30,21 +30,21 @@ const baseUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 export const metadata = {
   metadataBase: new URL(baseUrl),
-  title: 'Muhammad Hafizh | Software Engineer',
-  description: 'Muhammad Hafizh Taufiqurrohman - Software Engineer focusing on scalable systems, code maintainability, and clean UI architecture.',
-  keywords: ['Muhammad Hafizh', 'Muhammad Hafizh Taufiqurrohman', 'Software Engineer', 'Systems Architect', 'Indonesia', 'Laravel', 'React', 'Next.js', 'Web Developer'],
-  authors: [{ name: 'Muhammad Hafizh', url: 'https://github.com/Taufiqu' }],
+  title: 'Taufiqu | Software Engineer',
+  description: 'Taufiqu (Muhammad Hafizh Taufiqurrohman) - Software Engineer focusing on scalable systems, code maintainability, and clean UI architecture.',
+  keywords: ['Taufiqu', 'Muhammad Hafizh', 'Muhammad Hafizh Taufiqurrohman', 'Software Engineer', 'Systems Architect', 'Indonesia', 'Laravel', 'React', 'Next.js', 'Web Developer'],
+  authors: [{ name: 'Taufiqu', url: 'https://github.com/Taufiqu' }],
   openGraph: {
-    title: 'Muhammad Hafizh | Software Engineer',
-    description: 'Muhammad Hafizh Taufiqurrohman - Software Engineer focusing on scalable systems, code maintainability, and clean UI architecture.',
+    title: 'Taufiqu | Software Engineer',
+    description: 'Taufiqu (Muhammad Hafizh Taufiqurrohman) - Software Engineer focusing on scalable systems, code maintainability, and clean UI architecture.',
     url: 'https://github.com/Taufiqu',
-    siteName: 'Muhammad Hafizh Portfolio',
+    siteName: 'Taufiqu Portfolio',
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Muhammad Hafizh Portfolio Banner',
+        alt: 'Taufiqu Portfolio Banner',
       },
     ],
     locale: 'id_ID',
@@ -52,8 +52,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Muhammad Hafizh | Software Engineer',
-    description: 'Muhammad Hafizh Taufiqurrohman - Software Engineer focusing on scalable systems, code maintainability, and clean UI architecture.',
+    title: 'Taufiqu | Software Engineer',
+    description: 'Taufiqu (Muhammad Hafizh Taufiqurrohman) - Software Engineer focusing on scalable systems, code maintainability, and clean UI architecture.',
     images: ['/og-image.png'],
   },
   verification: {
