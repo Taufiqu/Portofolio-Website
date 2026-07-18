@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Navbar from '../../../components/layout/Navbar';
 import { NOTES_DATA } from '../../../data/notes';
+import TelemetryCounter from '../../../components/layout/TelemetryCounter';
 
 // Generate static params for static site generation
 export async function generateStaticParams() {
@@ -133,9 +134,13 @@ export default async function NotebookEntry({ params }) {
 
         {/* Designed Ending */}
         <div className="max-w-[1100px] mx-auto border-t border-[#27272A] pt-12 mt-24 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 select-none">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-[#2563EB]">
-            Designed for longevity.
-          </span>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-[#2563EB]">
+              Designed for longevity.
+            </span>
+            <span className="hidden sm:inline text-zinc-800">/</span>
+            <TelemetryCounter />
+          </div>
           <span className="font-mono text-[10px] text-zinc-500">
             Taufiqu © 2026.
           </span>

@@ -15,16 +15,27 @@ export default function Hero() {
           <p className="font-inter text-lg sm:text-xl text-[#FAFAFA] font-light max-w-[600px] leading-relaxed">
             Software Engineer. Designing software built to evolve.
           </p>
-          <button 
-            onClick={() => {
-              const el = document.getElementById('overview');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="group flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-500 hover:text-[#FAFAFA] interactive-transition mt-8 cursor-pointer select-none"
-          >
-            Read Overview
-            <span className="group-hover:translate-y-0.5 transition-transform duration-150">↓</span>
-          </button>
+          <div className="flex flex-row items-center gap-4 mt-8">
+            <button 
+              onClick={() => {
+                const el = document.getElementById('overview');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="group flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-zinc-500 hover:text-[#FAFAFA] interactive-transition cursor-pointer select-none"
+            >
+              Read Overview
+              <span className="group-hover:translate-y-0.5 transition-transform duration-150">↓</span>
+            </button>
+            <span className="text-zinc-700 select-none">/</span>
+            <a 
+              href="/cv.html" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-xs font-semibold uppercase tracking-wider text-zinc-500 hover:text-[#FAFAFA] interactive-transition"
+            >
+              View CV
+            </a>
+          </div>
         </div>
       </div>
 

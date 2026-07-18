@@ -3,6 +3,7 @@
 import React, { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { FiArrowRight } from 'react-icons/fi';
+import TelemetryCounter from '../layout/TelemetryCounter';
 
 const MY_EMAIL = "taufiqu.dev@gmail.com";
 
@@ -172,9 +173,13 @@ export default function ContactSection() {
 
         {/* Designed Ending (Closing spread of the book) */}
         <div className="w-full border-t border-[#27272A] pt-12 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 select-none">
-          <span className="font-mono text-[10px] uppercase tracking-widest text-[#2563EB]">
-            Designed for longevity.
-          </span>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <span className="font-mono text-[10px] uppercase tracking-widest text-[#2563EB]">
+              Designed for longevity.
+            </span>
+            <span className="hidden sm:inline text-zinc-800">/</span>
+            <TelemetryCounter />
+          </div>
           <span className="font-mono text-[10px] text-zinc-500">
             Taufiqu © 2026.
           </span>
