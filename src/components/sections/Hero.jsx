@@ -2,16 +2,15 @@
 
 import React from 'react';
 import { FiArrowRight } from 'react-icons/fi';
+import InteractiveWelcome from './InteractiveWelcome';
 
 export default function Hero() {
   return (
     <div className="w-full bg-[#0F0F11]">
       {/* 1. Typographic Welcome Banner (Landing Spread) */}
       <div className="max-w-[1100px] mx-auto min-h-[85vh] flex flex-col justify-center px-6">
-        <div className="flex flex-col gap-6 items-start">
-          <h1 className="font-geist text-6xl sm:text-8xl md:text-9xl font-extrabold tracking-tighter text-[#FAFAFA] uppercase leading-none select-none">
-            Taufiqu
-          </h1>
+        <div className="flex flex-col gap-6 items-start w-full">
+          <InteractiveWelcome />
           <p className="font-inter text-lg sm:text-xl text-[#FAFAFA] font-light max-w-[600px] leading-relaxed">
             Software Engineer. Designing software built to evolve.
           </p>

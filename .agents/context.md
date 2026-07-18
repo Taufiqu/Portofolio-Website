@@ -1,40 +1,242 @@
 # Workspace Context: Portofolio-Website
 
-Dokumen ini berfungsi sebagai panduan context kerja untuk melacak struktur repositori, konfigurasi, status, serta detail komponen portofolio.
+This document defines the current creative direction, technical constraints, and identity of this portfolio.
 
-## 🛠️ Aturan Repositori (`AGENTS.md`)
-1. **Co-author Commit**: Selalu tambahkan `Co-authored-by: Antigravity <antigravity-bot@users.noreply.github.com>` di akhir deskripsi commit git.
-2. **Anti Data Dummy**: Selalu gunakan data nyata (API, Supabase, Client Telemetry) dibanding hardcoded.
-3. **Research First**: Selalu lakukan pencarian web sebelum menulis solusi krusial.
+The portfolio should no longer be interpreted as a hacker-themed developer interface.
 
-## 📂 Struktur Utama
-- `src/app/`
-  - `page.jsx` — Halaman utama utama portofolio. Merender layout, Navbar, Hero, Projects, Dashboard, Journey, Guestbook, Contact, dan Footer.
-  - `layout.jsx` — Root layout Server Component. Di-wrap oleh `ThemeWrapper`.
-  - `globals.css` — Berisi variable tema utama `:root` (DEV) dan `[data-theme="pro"]` (PRO).
-- `src/context/`
-  - `ThemeContext.jsx` — Menyediakan provider `ThemeProvider` untuk state `theme` ('dev' | 'pro') dan sinkronisasi element class `dark`.
-- `src/components/`
-  - `ui/`
-    - `ThemeTransitionOverlay.jsx` — Layar transisi asimetris (Terminal compile vs Elegant wipe).
-    - `ThemeWrapper.jsx` — Client component wrapper.
-  - `layout/`
-    - `Navbar.jsx` — Navigasi bar adaptif dengan tombol toggle mode.
-    - `Footer/Footer.jsx` — Footer minimalis menggunakan CSS variables.
-  - `sections/`
-    - `Hero.jsx` — Headline + introduction pitch.
-    - `ProjectsSection.jsx` — Galeri proyek (featured systems).
-    - `Dashboard.jsx` — Bento layout berisi visualizer telemetry, Spotify mini-player, & system stats.
-    - `JourneySection.jsx` — Visualizer riwayat karir/edukasi.
-    - `GuestbookSection.jsx` — Form tanda tangan buku tamu.
-    - `ContactSection.jsx` — Form kontak.
+The goal is to create a personal brand that combines:
 
-## 🎨 Spesifikasi Dua Tema
+1. Software Engineering
+2. System thinking
+3. Visual storytelling
+4. Photography and observation
 
-### 💻 DEV Mode (Obsidian & Cyan)
-- **Background**: `#0B0F17` (obsidian)
-- **Aesthetic**: Geeky, terminal, Fira Code font, brackets `[ ]`, index prefix (`01.`), prompt commands, glitch effects.
+The website should communicate a person who builds software carefully and observes the world visually.
 
-### 👔 PROFESSIONAL Mode (Slate & Blue)
-- **Background**: `#F8FAFC` (off-white)
-- **Aesthetic**: Clean, corporate, Plus Jakarta Sans, human-readable labels, no terminal prompts, no index bracket prefixes, expanded layouts, minimal and warm colors.
+---
+
+# Core Brand Identity
+
+Name:
+TAUFIQU
+
+Position:
+Software Engineer with an interest in visual composition and digital experiences.
+
+Core statement:
+
+"Designing software built to evolve."
+
+The portfolio is not a developer dashboard.
+
+It is a personal studio where engineering and visual thinking meet.
+
+---
+
+# Creative Direction
+
+## Primary Aesthetic
+
+Editorial.
+Architectural.
+Minimal.
+Human.
+
+References:
+- Premium software products
+- Architecture publications
+- Industrial design books
+- Modern creative studios
+
+The interface should feel timeless.
+
+Avoid trends that quickly become generic.
+
+---
+
+# Forbidden Visual Language
+
+Do NOT use:
+
+- Hacker aesthetic
+- Cyberpunk UI
+- Terminal simulation
+- Fake operating system interfaces
+- Developer dashboard visuals
+- Glowing neon effects
+- Excessive gradients
+- Glassmorphism
+- Artificial system statuses
+- Fake technical indicators
+
+Avoid visual elements that exist only to signal:
+
+"I am a programmer."
+
+---
+
+# Typography System
+
+Primary typography:
+
+Sans-serif:
+- Geist
+- Inter
+- Inter Tight
+
+Used for:
+- Headlines
+- Body content
+- Navigation
+- Editorial text
+
+Monospace:
+
+JetBrains Mono
+
+Use only for:
+- Dates
+- Small metadata
+- Technical labels
+- Code snippets
+
+Do NOT use monospace as the main personality of the website.
+
+Do NOT use:
+- ALL CAPS terminal labels
+- COMMAND_STYLE_TEXT
+- FILE_PATH_STYLE_NAVIGATION
+
+---
+
+# Language Style
+
+The website should speak like a thoughtful engineer.
+
+Prefer:
+
+"Building software that remains maintainable as it grows."
+
+"Designing systems that evolve with changing requirements."
+
+Avoid:
+
+"SYSTEM INITIALIZED"
+
+"EXECUTE PROJECT"
+
+"LOADING EXPERIENCE"
+
+"ACCESS DATABASE"
+
+"MODE: ACTIVE"
+
+---
+
+# Interactive Design Philosophy
+
+Interactive elements are allowed.
+
+However, every interaction must support one of these ideas:
+
+- Engineering thinking
+- Visual exploration
+- Human creativity
+
+Interactions should feel like creative tools, not software controls.
+
+---
+
+# Hero Interactive Canvas
+
+The hero may include an interactive visual element based around the brand name:
+
+TAUFIQU
+
+Concept:
+
+The name becomes a visual canvas.
+
+Users can interact with the typography through color, texture, light, or composition.
+
+The experience should feel closer to:
+
+- digital art
+- photography
+- creative exploration
+
+Not:
+
+- code editor
+- camera simulator UI
+- terminal interface
+
+Avoid labels such as:
+
+LENS_MODE
+SYSTEM_MODE
+RESET_CANVAS
+EXPOSURE_CONTROL
+
+Prefer simple human language:
+
+Color
+Texture
+Light
+Reset
+
+Or hide controls completely until interaction begins.
+
+---
+
+# Photography Identity
+
+Photography is not a gallery feature.
+
+It represents:
+
+Observation.
+Composition.
+Attention to detail.
+
+Avoid:
+- Camera gear focus
+- Excessive EXIF information
+- Technical photography jargon
+
+The goal is showing how the owner sees.
+
+---
+
+# Project Presentation
+
+Projects should demonstrate engineering decisions.
+
+Focus on:
+
+- Problem
+- Context
+- Constraints
+- Architecture
+- Decisions
+- Outcome
+
+Avoid presenting projects as simple technology lists.
+
+Technology should support the story.
+
+---
+
+# Overall Design Principle
+
+The portfolio should answer:
+
+"How does this person think?"
+
+Not:
+
+"What programming tools does this person use?"
+
+The final impression should be:
+
+"This engineer builds software with the same care used to design this interface."
