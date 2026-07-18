@@ -254,28 +254,31 @@ export default function InteractiveWelcome() {
       </div>
 
       {/* Camera-inspired Lens Controller Panel */}
-      <div className="flex items-center gap-5 font-mono text-[10px] tracking-wider text-zinc-500">
+      <div className="flex items-center gap-5 font-mono text-[10px] tracking-wider text-zinc-500 select-none">
         <div className="flex gap-4">
-          {MODES.map((mode) => (
-            <button
-              key={mode.id}
-              onClick={() => handleModeChange(mode.id)}
-              className={`interactive-transition cursor-pointer ${
-                activeMode === mode.id 
-                  ? 'text-[#FAFAFA] font-bold border-b border-[#2563EB] pb-0.5' 
-                  : 'hover:text-[#FAFAFA]'
-              }`}
-            >
-              {mode.label}
-            </button>
-          ))}
+          {MODES.map((mode) => {
+            const isActive = activeMode === mode.id;
+            return (
+              <button
+                key={mode.id}
+                onClick={() => handleModeChange(mode.id)}
+                className={`pb-1 border-b-2 font-medium interactive-transition cursor-pointer ${
+                  isActive 
+                    ? 'text-[#FAFAFA] border-[#2563EB]' 
+                    : 'text-zinc-500 border-transparent hover:text-[#FAFAFA]'
+                }`}
+              >
+                {mode.label}
+              </button>
+            );
+          })}
         </div>
 
         <span className="text-zinc-800 select-none">/</span>
 
         <button 
           onClick={handleReset}
-          className="hover:text-[#FAFAFA] interactive-transition cursor-pointer"
+          className="pb-1 border-b-2 border-transparent font-medium hover:text-[#FAFAFA] interactive-transition cursor-pointer"
         >
           Reset
         </button>
