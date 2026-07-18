@@ -14,8 +14,12 @@ export default function ContactSection() {
   const sendEmail = (e) => {
     e.preventDefault();
     setStatus('sending');
+
+    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 'service_j4eifiq';
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'template_0o1pdwi';
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || 'Twqk5ZjbD6WXRHN69';
  
-    emailjs.sendForm('service_j4eifiq', 'template_0o1pdwi', form.current, 'Twqk5ZjbD6WXRHN69')
+    emailjs.sendForm(serviceId, templateId, form.current, publicKey)
       .then((result) => {
           setStatus('success');
           e.target.reset();
