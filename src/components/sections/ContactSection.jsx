@@ -157,7 +157,7 @@ export default function ContactSection() {
                     GitHub
                   </a>
                   <a 
-                    href="https://www.linkedin.com/in/muhammad-hafizh-taufiqurrohman-421121290/" 
+                    href="https://linkedin.com/in/hafizh-t" 
                     target="_blank" 
                     rel="noreferrer"
                     className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 hover:text-[#FAFAFA] interactive-transition"

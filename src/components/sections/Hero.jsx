@@ -101,13 +101,29 @@ export default function Hero() {
             </div>
 
             {/* Action Links */}
-            <div className="flex flex-row items-center gap-6 mt-2">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mt-2">
               <a 
                 href="#contact" 
                 className="group flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#FAFAFA] hover:text-[#2563EB] interactive-transition"
               >
                 Contact
                 <FiArrowRight className="group-hover:translate-x-1 interactive-transition" />
+              </a>
+              <a 
+                href="https://linkedin.com/in/hafizh-t" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-xs font-semibold uppercase tracking-wider text-[#A1A1AA] hover:text-[#FAFAFA] interactive-transition"
+              >
+                LinkedIn
+              </a>
+              <a 
+                href="https://wa.me/6285789469096" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-xs font-semibold uppercase tracking-wider text-[#A1A1AA] hover:text-[#FAFAFA] interactive-transition"
+              >
+                WhatsApp
               </a>
               <a 
                 href="https://github.com/Taufiqu" 
