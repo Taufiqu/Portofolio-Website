@@ -62,11 +62,29 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right Column: Hero Content */}
-          <div className="flex flex-col gap-6 md:gap-10 items-start">
-            <p className="font-inter text-editorial text-muted-secondary">
-              Building software that remains maintainable as it grows.
-            </p>
+          {/* Right Column: Typographic Editorial Bio Block */}
+          <div className="flex flex-col gap-6 md:gap-8 items-start w-full">
+            <div className="flex flex-col gap-3 md:gap-4 w-full">
+              {/* Baris 1: Full Name */}
+              <h2 className="font-geist text-2xl sm:text-3xl font-bold tracking-tight text-[#FAFAFA] leading-tight">
+                Muhammad Hafizh
+              </h2>
+              
+              {/* Baris 2: Role (Accent Blue) */}
+              <span className="font-mono text-xs sm:text-sm font-semibold tracking-[0.15em] uppercase text-[#2563EB] select-none">
+                Software Engineer
+              </span>
+              
+              {/* Baris 3: Philosophy Statement */}
+              <p className="font-inter text-lg sm:text-xl font-light tracking-tight text-[#FAFAFA] leading-relaxed max-w-[640px]">
+                Building software that remains maintainable as it grows.
+              </p>
+              
+              {/* Baris 4: Supporting bio description */}
+              <p className="font-inter text-sm sm:text-[15px] leading-relaxed text-[#A1A1AA] max-w-[600px]">
+                I design and develop web applications with a focus on frontend architecture, reusable systems, and scalable user experiences.
+              </p>
+            </div>
 
             {/* Responsive metadata block for mobile only */}
             <div className="flex md:hidden flex-col gap-4 py-6 border-y border-[#27272A] w-full">
@@ -82,7 +100,8 @@ export default function Hero() {
               </div>
             </div>
 
-            <div className="flex flex-row items-center gap-6 mt-4">
+            {/* Action Links */}
+            <div className="flex flex-row items-center gap-6 mt-2">
               <a 
                 href="#contact" 
                 className="group flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#FAFAFA] hover:text-[#2563EB] interactive-transition"
