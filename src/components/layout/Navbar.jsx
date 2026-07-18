@@ -16,41 +16,54 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
+  const [isAtTop, setIsAtTop] = useState(true);
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          setScrolled(scrollY > 40);
+          setIsAtTop(scrollY < 100);
+
+          // Calculate active section based on real-time BoundingClientRect coordinates
+          const sections = ['overview', 'work', 'notebook', 'observations', 'contact'];
+          let currentActive = 'overview';
+
+          // A section is considered active if its top border has scrolled past 30% of the viewport height
+          const threshold = window.innerHeight * 0.3;
+
+          for (const id of sections) {
+            const el = document.getElementById(id);
+            if (el) {
+              const rect = el.getBoundingClientRect();
+              if (rect.top <= threshold) {
+                currentActive = id;
+              }
+            }
+          }
+
+          setActiveSection(currentActive);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
+
+    // Run once on mount
+    handleScroll();
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    const sections = ['overview', 'work', 'notebook', 'observations', 'contact'];
-    
-    const observerCallback = (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
-        }
-      });
-    };
-
-    const observerOptions = {
-      root: null,
-      rootMargin: '-40% 0px -40% 0px',
-      threshold: 0,
-    };
-
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-    sections.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const getActiveLabel = () => {
+    if (isAtTop) return 'Portofolio';
+    const item = NAV_ITEMS.find(nav => nav.href.replace('/#', '') === activeSection);
+    return item ? item.label : 'Portofolio';
+  };
 
   return (
     <nav
@@ -61,12 +74,13 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-[1100px] mx-auto px-6 flex justify-between items-center relative">
-        {/* Brand */}
+        {/* Brand: Dynamically updates on scroll, defaulting to "Taufiqu - Portofolio" at the top */}
         <Link
           href="/"
-          className="text-xs font-semibold tracking-[0.2em] text-[#FAFAFA] uppercase hover:opacity-80 interactive-transition"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="text-xs font-semibold tracking-[0.2em] text-[#FAFAFA] uppercase hover:opacity-80 interactive-transition select-none"
         >
-          Taufiqu - Portofolio
+          Taufiqu - <span className="text-[#2563EB]">{getActiveLabel()}</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -74,7 +88,8 @@ export default function Navbar() {
           <ul className="flex items-center gap-6">
             {NAV_ITEMS.map((item) => {
               const targetId = item.href.replace('/#', '');
-              const isActive = activeSection === targetId;
+              // Active highlight only lights up if we are scrolled down past the top welcome view
+              const isActive = !isAtTop && activeSection === targetId;
               return (
                 <li key={item.label}>
                   <Link
@@ -106,7 +121,7 @@ export default function Navbar() {
             <ul className="flex flex-col gap-3 text-sm">
               {NAV_ITEMS.map((item) => {
                 const targetId = item.href.replace('/#', '');
-                const isActive = activeSection === targetId;
+                const isActive = !isAtTop && activeSection === targetId;
                 return (
                   <li key={item.label} className="border-b border-[#27272A] last:border-b-0 pb-2 last:pb-0">
                     <Link
